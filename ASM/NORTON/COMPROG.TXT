@@ -1,0 +1,14 @@
+Toelichting bij de COM files in deze directory:
+
+Naam :          Omschrijving :
+SCHRSTER        Beeldt 1 teken af
+BINAIR          Conversie hex Ä> bin
+BINAIRB         Conversie hex Ä> bin met een 'b' erachter
+HEX             Conversie hex Ä> ASCII 1 getal     (hele byte)
+HEX2            Conversie hex Ä> ASCII 1 getal     (links in byte)
+HEX3            Conversie hex Ä> ASCII 1 getal     (rechts in byte)
+HEXOK           Combinatie HEX2 + HEX3  2 getallen  (hele byte)
+READ2HEX        Conversie ASCII Ä> hex, 2 letters
+PROC            Demo van procedure, beeldt met loop rij letters af
+READWRIT        Conversie ASCII Ä> hex, 1 letter met foutcontrole
+
