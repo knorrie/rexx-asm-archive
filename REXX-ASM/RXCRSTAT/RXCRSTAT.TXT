@@ -1,0 +1,46 @@
+-u 100 14c       อออออออออออออออออ RXCRSTAT.RX อออออออออออออออออ
+1481:0100 833E820001    CMP     WORD PTR [0082],+01
+1481:0105 7542          JNZ     0149       If Arg()<>1 Then 0149 (ErrorExit)
+1481:0107 C5368400      LDS     SI,[0084]   ฎ adres Arg(1)-pointer ฏ
+1481:010B 8B2C          MOV     BP,[SI]    bp=Length(Arg(1))
+1481:010D C57402        LDS     SI,[SI+02]  ฎ adres van Arg(1) ฏ
+1481:0110 AD            LODSW              ax=Left(Arg(1),2)
+1481:0111 25DFDF        AND     AX,DFDF    AND ax met 11011111b -> hoofdletters
+1481:0114 83FD03        CMP     BP,+03    -S When bp=3 'off'
+1481:0117 740C          JZ      0125           Then 0125
+1481:0119 83FD02        CMP     BP,+02       When bp<>2
+1481:011C 752B          JNZ     0149           Then ErrorExit 0149
+1481:011E 3D4F4E        CMP     AX,4E4F      When ax<>4E4F 'ON'
+1481:0121 7526          JNZ     0149           Then ErrorExit 0149
+1481:0123 EB0C          JMP     0131      -S Otherwise 0131
+
+1481:0125 3D4F46        CMP     AX,464F    If ax<>464F 'OF'
+1481:0128 751F          JNZ     0149         Then ErrorExit 0149
+1481:012A AC            LODSB              al=Substr(Arg(1),3,1)
+1481:012B 24DF          AND     AL,DF      AND al met 11011111b -> hoofdletter
+1481:012D 3C46          CMP     AL,46      If al<>46 'F'
+1481:012F 7518          JNZ     0149         Then ErrorExit 0149
+
+1481:0131 B403          MOV     AH,03      ch=starting scan line
+1481:0133 CD10          INT     10         cl=ending scan line
+1481:0135 80E5DF        AND     CH,DF      AND ch met 11011111b -> bit 5 uit
+                                             (als die nog niet uit was)
+                                             de cursor is er nu weer als de
+                                             grootte mbv functie 3 wordt in-
+                                             gesteld.
+1481:0138 83FD03        CMP     BP,+03     If bp<>3 (bp='ON')
+1481:013B 7503          JNZ     0140         Then 0140 Nop
+1481:013D 80CD20        OR      CH,20        Else OR ch met 00100000b
+                                               hier wordt bit 5 aangezet
+                                               (als die nog niet aan was)
+                                               als bit 5 aan is dan is de begin-
+                                               scanline groter als eindscanline
+                                               en is de cursor niet te zien
+1481:0140 B401          MOV     AH,01      SetCursorSize(beginline,endline)
+1481:0142 CD10          INT     10                       CH        CL
+1481:0144 B8004C        MOV     AX,4C00    Exit
+1481:0147 CD21          INT     21
+1481:0149 B8014C        MOV     AX,4C01    ErrorExit
+1481:014C CD21          INT     21
+-q
+
