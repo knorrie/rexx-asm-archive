@@ -1,0 +1,50 @@
+Interrupt 16h (keyboard)
+
+READKEY.ASM (READKEY.RX) - int 16h, 00h from REXX
+
+  input  : geen
+  output : 4-byte ax
+    (geconverteerd omdat REXX ASCIIZ-string gebruikt bij RXRESULT)
+
+  bv. key = READKEY()
+
+
+KEYCHK.ASM (KEYCHK.RX) - int 16h, 01h from REXX
+
+  input  : geen
+  output : 4-byte ax, of 0-byte niets
+    (geconverteerd omdat REXX ASCIIZ-string gebruikt bij RXRESULT)
+
+  bv. key = KEYCHK()
+
+SHIFTCHK.ASM (SHIFTCHK.RX) - int 16h, 02h from REXX
+
+  input  : geen
+  output : 1-byte al
+
+  bv. shiftstatus = SHIFTCHK()
+
+PUSHKEY.ASM (PUSHKEY.RX) - int 16h, 05h from REXX
+
+  input  : 2-byte cx
+  output : 0 = added, 1 = Keyboard buffer full, not added
+
+  bv. Do Until \ PUSHKEY('324D'x); End
+      -> Try until succesful
+
+EREADKEY.ASM (EREADKEY.RX) - int 16h, 10h from REXX
+
+  input  : geen
+  output : 4-byte ax
+    (geconverteerd omdat REXX ASCIIZ-string gebruikt bij RXRESULT)
+
+  bv. key = EREADKEY()
+
+EKEYCHK.ASM (EKEYCHK.RX) - int 16h, 11h from REXX
+
+  input  : geen
+  output : 4-byte ax, of 0-byte niets
+    (geconverteerd omdat REXX ASCIIZ-string gebruikt bij RXRESULT)
+
+  bv. key = EKEYCHK()
+
