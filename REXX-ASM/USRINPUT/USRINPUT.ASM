@@ -1,6 +1,6 @@
 ; USRINPUT.ASM (USRINPUT.RX)
 ;
-;   UserInput v2.00 - Hans van Kranenburg 1996 - voor PC DOS 7 REXX
+;   UserInput v2.01 - Hans van Kranenburg 1996 - voor PC DOS 7 REXX
 ;
 ;   History:
 ;
@@ -23,6 +23,18 @@
 ;        studie en wat geprobeer moet er wel uit te komen zijn, geloof ik,
 ;        als het echt niet lukt, stuur dan maar een E-mailtje)
 ;
+;   Versie 2.01  In Produktie gegaan: á (gelijk met Yathzee v2.40)
+;   Wijzigingen:
+;     Het was een kleine moeite om UserInput v2.00 zo te veranderen, dat
+;       als er voor aantal tekens 00h wordt opgegeven, toch de string af
+;       te beelden (als echo on, natuurlijk), wat eerst niet kon, omdat je
+;       er dan uitgegooid werd met een error, omdat aantal tekens kleiner is
+;       dan lengte van string die opgegeven is, of zonder error als er geen
+;       string was opgegeven
+;     Dat UserInput UserInput is, is nu ook in de RX zelf terug te vinden
+;     The Manual (USRINPUT.TXT) is iets duidelijker en de at=00h uitbreiding
+;       staat erbij
+;
 
 code            segment
   assume        cs:code,ss:code,ds:code,es:code
@@ -38,6 +50,8 @@ code            segment
 start:          jmp codestart
 
   ; begin data 2
+                db      'UserInput Version 2.01 - Hans van Kranenburg 1996'
+                db      ' - PC DOS 7 REXX External Function'
    ; REXX arg 1 ->
   at            db      ?               ; aantal tekens
   opt           db      ?               ; opties
@@ -84,11 +98,13 @@ codestart:      cmp     RXARGC,0002h    ; Controleren aantal parameters
                 call    arg2            ; str ophalen
                 call    crstat          ; cursor on/off
                 call    prtstr          ; afbeelden hok / inhoud (bij echo on)
+                 cmp     at,00h          ; als gevraagde input-lengte 0 is, dan
+                 je      jp_0            ;  hebben we verder niets te doen
                 call    setcpos         ; cursor naar beginpositie
                 call    input           ; userinput
                 call    uppercase       ; convert to uppercase
                 call    result          ; str bij REXX dumpen
-                call    cursrestore     ; cursorinfo terughalen
+jp_0:           call    cursrestore     ; cursorinfo terughalen
 
 exit:           mov     ax,4C00h        ; afsluiten
                 int     21h
@@ -108,8 +124,6 @@ arg1            proc    near            ; ophalen en verwerken arg 1
                 mov     cx,bx           ; lengte arg 1
             rep movsb                   ; kopi‰ren
                 pop     ds              ; ds weer terug
-                cmp     at,00h          ; als gevraagde input-lengte 0 is, dan
-                je      exit            ;  hebben we niets te doen
                                         ; controleren lengte arg 1
                 test    opt,80h         ; rchr opgegeven ?
                 jz      jp_arg1_0       ; nee
@@ -173,9 +187,11 @@ arg2            proc    near            ; ophalen arg2, str en bp init
                 mov     bx,[di+06h]     ; length arg 2
                 xor     ch,ch
                 mov     cl,es:at
+                or      cx,cx           ; at=0 kan wel, dan wordt alleen str
+                jz      jp_arg2_2       ;  afgebeeld en daarna exit (hoofdprog)
                 cmp     bx,cx           ; maximale lengte str is at
                 ja      errorexit
-                lds     si,[di+08h]     ; arg 2
+jp_arg2_2:      lds     si,[di+08h]     ; arg 2
                 cld                     ; arg 2 kopi‰ren in str
                 lea     di,str
                 mov     cx,bx           ; lengte
@@ -237,7 +253,10 @@ prtstr          proc    near            ; afbeelden hok met str of rchr en chr
 jp_prtstr_0:    lea     bp,str          ; offset string
 jp_prtstr_1:    xor     ch,ch
                 mov     cl,at           ; aantal tekens
-                mov     dx,cposinp      ; cpos begin hok
+                or      cl,cl
+                jnz     jp_prtstr_3
+                mov     cl,ls
+jp_prtstr_3:    mov     dx,cposinp      ; cpos begin hok
                 int     10h
                 pop     bp
 jp_prtstr_2:    ret
