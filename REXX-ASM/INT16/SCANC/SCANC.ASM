@@ -1,4 +1,4 @@
-; SCANC2.COM
+; SCANC.COM
 ;   Input : toets(encombinatie)
 ;   Output: scancode en toetscode
 ; Programma beeindigen met ALT-[1]
@@ -7,7 +7,7 @@ Code    Segment
         Assume  cs:Code
         Org     100h
 
-start:          xor     ax,ax           ; Functie 0 van int 16h
+start:          mov     ah,10h          ; Functie 10h van int 16h
                 int     16h
                 cmp     ax,0001h        ; ALT-[1] ingetoetst?
                 je      byebye          ; dan afsluiten
