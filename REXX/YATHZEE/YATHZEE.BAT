@@ -1,15 +1,34 @@
 /*ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-  º YATHZEE REXX Versie 2.02 door Hans van Kranenburg 1995/1996              º
+  º YATHZEE REXX Versie 2.10  Hans van Kranenburg 1995-1996                  º
   ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
-Veranderingen t.o.v. v2.01:
+Versie 1.00 In produktie gegaan: -
+
+Versie 2.00 In produktie gegaan: -
+Wijzigingen:
+  Alles, het programma is totaal herschreven
+
+Versie 2.01 In produktie gegaan: -
+Wijzigingen:
+  Bij verkeerde keuze is '--' in 'ÄÄ' veranderd
+  Type-foutje bij 'Is scl.sp>63 Then bonus=35' verbeterd
+
+Versie 2.02 In produktie gegaan: -
+Wijzigingen:
   Gooien.stenen routine aangepast, nu ook voor stenen vasthouden
   Extra keuze bij gooien: Alle stenen vast
   Bonus-bug opgelost
   Veranderde manier opbouw openingsscherm; nu m.b.v. internal data queue
-  Aanpassing routine scherm opbouwen, programmacode past nu op scherm */
+  Aanpassing routine scherm opbouwen, programmacode past nu op scherm
+
+Versie 2.10 In produktie gegaan: 20 april 1996
+Wijzigingen:
+  Er wordt nu een Yathzee-Top-10 bijgehouden
+  Veel kleine dingen aangepast */
 
 /* Hoofdprogramma */
-Trace Off; Rxcrstat(off)
+Trace Off; Rxcrstat('off')
+versie='2.10'; jaar='1996'
+Call top10file
 Do Until sp=-1
   Call opening
   Call schermopbouwen
@@ -22,15 +41,33 @@ Do Until sp=-1
   End
   Call einde
 End
+Call top10zien
 Rxcls()
 
 exit:
-Rxcrstat(on)
+Rxcrstat('on')
 Exit
 /* einde hoofdprogramma */
 
+/* Naam van Yathzee-Top-10-file wordt gecre‰erd, er wordt gecontroleerd of de
+   file wel bestaat. Zo niet, dan wordt een nieuwe aangemaakt */
+top10file: Procedure Expose scr versie
+
+Parse Source . . execfile
+scr=Substr(execfile,1,Lastpos('\',execfile))||'YATHZEE.SCR'
+say 'Yathzee-Top-10: 'scr
+
+If Rxisdir(scr)<>0 Then Do
+  rc=Stream(scr,'c','open')
+  Do 10; rc=Charout(scr,'Yathzee v'versie'       000'); End
+  rc=Stream(scr,'c','close')
+End
+
+Return
+/* einde top10file */
+
 /* Opening */
-opening: Procedure Expose splrs naam. init. punten scl. scr.
+opening: Procedure Expose splrs naam. init. punten scl. scr. scr versie jaar
 
 /* Controleren schermgrootte */
 If Subword(Rxscrsiz(),2,1)<80 Then Do
@@ -38,60 +75,71 @@ If Subword(Rxscrsiz(),2,1)<80 Then Do
   Signal exit
 End
 
+opening2:
 /* Openingsscherm afbeelden */
 Rxcls(16)
 Queue 'Û     Û  ÛßßßßßÛ  ßßßÛßßß  Û     Û  ßßßßßßÛ  Ûßßßßßß  Ûßßßßßß'
-Queue 'Û     Û  Û     Û     Û     Û     Û        Û  Û        Û'
-Queue 'ßßßÛßßß  ÛßßßßßÛ     Û     ÛßßßßßÛ   ÜÜÜßßß  Ûßßßßß   Ûßßßßß'
-Queue '   Û     Û     Û     Û     Û     Û  Û        Û        Û'
+Queue 'Û     Û  Û     Û     Û     Û     Û        Û  Û        Û      '
+Queue 'ßßßÛßßß  ÛßßßßßÛ     Û     ÛßßßßßÛ   ÜÜÜßßß  Ûßßßßß   Ûßßßßß '
+Queue '   Û     Û     Û     Û     Û     Û  Û        Û        Û      '
 Queue '   Û     Û     Û     Û     Û     Û  ÛÜÜÜÜÜÜ  ÛÜÜÜÜÜÜ  ÛÜÜÜÜÜÜ'
+Queue ''
 Queue 'ÛßßßßßÛ  Ûßßßßßß  Û     Û  Û     Û'
-Queue 'Û     Û  Û         Û   Û    Û   Û'
-Queue 'ÛßßßÛßß  Ûßßßßß     ÛÛÛ      ÛÛÛ'
-Queue 'Û    Û   Û         Û   Û    Û   Û'
+Queue 'Û     Û  Û         Û   Û    Û   Û '
+Queue 'ÛßßßÛßß  Ûßßßßß     ÛÛÛ      ÛÛÛ  '
+Queue 'Û    Û   Û         Û   Û    Û   Û '
 Queue 'Û     Û  ÛÜÜÜÜÜÜ  Û     Û  Û     Û'
-Do n=2 to 6; Rxsetpos(n,10); Pull q; rc=Rxwrscr(q,18); End n
-Do n=8 to 12; Rxsetpos(n,24); Pull q; rc=Rxwrscr(q,18); End n
-Rxsetpos(24,9)
-rc=Rxwrscr('Versie 2.02 Hans van Kranenburg 1995/1996 IBM PC DOS 7.0 REXX',23)
-Rxsleep(3)
+Rxsetpos(2,0)
+Do 11; Pull q; rc=Rxwrscr(Centre(q,80),18); End
+Rxsetpos(24,0)
+rc=Rxwrscr(Centre('Versie 'versie'  Hans van Kranenburg 'jaar' IBM PC DOS '||,
+  '7.0 REXX',80),23)
+If splrs<>'nowait' Then rc=Rxsleep(3)
 
 /* Informatie spelers opvragen */
 splrs=0
-Rxsetpos(14,5); rc=Rxwrscr('Aantal spelers [1-5] ?',23); Rxcls(,14,28,14,28)
+Rxsetpos(14,5)
+rc=Rxwrscr("Aantal spelers [1-5] of 'T' voor Yathzee-Top-10 ?",23)
+Rxcls(,14,55,14,55)
 Do Until splrs>=1 & splrs<=5
-  Rxsetpos(14,28)
-  Rxcrstat(on); splrs=rxgetkey(echo); Rxcrstat(off); Rxcls(16,22,15,22,64)
-  If splrs<1 | splrs>5 Then Do
-    Rxsetpos(22,15)
-    rc=Rxwrscr('Verkeerde invoer ÄÄ Aantal spelers 1, 2, 3, 4 of 5',23)
+  Do While Chars()<>0; rc=Rxgetkey('noecho'); End
+  Rxsetpos(14,55)
+  Rxcrstat('on'); splrs=Translate(Rxgetkey('echo')); Rxcrstat('off')
+  Rxcls(16,22,0,22,79)
+  Select
+    When splrs='T' Then Do; Call top10zien; Signal opening2; End
+    When splrs>=1 & splrs<=5 Then Nop
+    Otherwise
+      Rxsetpos(22,0)
+      rc=Rxwrscr(Centre("Aantal spelers tussen 1 en 5 of 'T' voor Yathzee-To"||,
+        'p-10',80),23)
   End
 End
-Do n=1 to splrs; v=14+n
+Do n=1 to splrs; v=15+n
   Rxsetpos(v,5); rc=Rxwrscr('Naam speler 'n':',23)
   Rxcls(,v,20,v,39); Rxsetpos(v,20)
-  Rxcrstat(on); Parse Pull naam.n; Rxcrstat(off)
+  Rxcrstat('on'); Parse Pull naam.n; Rxcrstat('off')
   Rxcls(16,v,40,v,79);Rxcls(16,v+1,0,v+1,66)
-  naam.n=strip(substr(naam.n,1,20))
+  naam.n=Strip(Substr(naam.n,1,20))
   Rxsetpos(v,44); rc=Rxwrscr('Initialen speler 'n':',23)
   Rxcls(,v,64,v,67); Rxsetpos(v,64)
-  Rxcrstat(on); Parse Pull init.n; Rxcrstat(off)
+  Rxcrstat('on'); Parse Pull init.n; Rxcrstat('off')
   Rxcls(16,v,68,v,79); Rxcls(16,v+1,0,v+1,79); Rxcls(16,v+2,0,v+2,30)
-  init.n=strip(substr(init.n,1,4))
+  init.n=Strip(Substr(init.n,1,4))
 End n
 
 /* Variabelen voor puntentelling beginwaarden geven */
-punten=Copies(0,splrs*13)
+punten=Copies('0',splrs*13)
 Do n=1 to splrs; scl.n=0; scr.n=0; End n
 
 Return
 /* einde opening */
 
 /* Scherm opbouwen */
-schermopbouwen: Procedure Expose splrs init. naam.
+schermopbouwen: Procedure Expose splrs naam. init. versie
 
 Rxcls(); Rxcls(16,0,0,0,79); Rxcls(16,24,0,24,79)
-Rxsetpos(0,31); rc=Rxwrscr('YATHZEE REXX v2.02',23)
+Rxsetpos(0,0); rc=Rxwrscr(Centre('YATHZEE REXX v'versie,80),23)
 Rxsetpos(0,61); rc=Rxwrscr('Hans van Kranenburg',23)
 Rxsetpos(2,0)
 rc=Charout(,'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÑÍÍÍÍÑÍÍÍÍÑÍÍÍÍÑÍÍÍÍËÍÍÍÍÍÍÍÍÍÍÍÍÍÍËÍÍÍÍÑÍÍÍ'||,
@@ -152,7 +200,9 @@ Do worp=1 to 3
     Say '  3. Steen 3    L. Alle stenen los'
     Say '  4. Steen 4    G. Volgende worp'
     Do Until n=g | c2d(n)=13
-      Rxsetpos(15,62); Rxcrstat(on); n=Translate(Rxgetkey(echo)); Rxcrstat(off)
+      Do While Chars()<>0; rc=Rxgetkey('noecho'); End
+      Rxsetpos(15,62)
+      Rxcrstat('on'); n=Translate(Rxgetkey('echo')); Rxcrstat('off')
       Rxcls(16,24,6,24,79)
       Select
         When n>=1 & n<=5 Then
@@ -162,8 +212,9 @@ Do worp=1 to 3
         When n='L' Then Call gooien.stenen 1 5 7
         When n='G' | c2d(n)=13 Then Nop
         Otherwise
-          Rxsetpos(24,15)
-          rc=Rxwrscr('Verkeerde keuze ÄÄ Toets 1, 2, 3, 4, 5, V, L of G',23)
+          Rxsetpos(24,6)
+          rc=Rxwrscr(Centre('Verkeerde keuze ÄÄ Toets 1, 2, 3, 4, 5, V, L of'||,
+          ' G',68),23)
       End
     End
   End
@@ -193,12 +244,9 @@ Return
 bubble: Procedure Expose st.
 
 grens=5
-Do Until c=0
-  n=0; c=0
-  grens=grens-1
-  If grens>0 Then Do Until n=grens
-    n=n+1; m=n+1
-    If st.n>st.m Then Do; c=1; h=st.n; st.n=st.m; st.m=h; End
+Do Until ok | grens=1; n=0; ok=0; grens=grens-1
+  Do Until n=grens; n=n+1; m=n+1
+    If st.n>st.m Then Do; ok=0; h=st.n; st.n=st.m; st.m=h; End
   End
 End
 
@@ -216,18 +264,17 @@ Say '  3. Drie‰n   7. Drie dezelfde   11. Grote straat'
 Say '  4. Vieren   8. Vier dezelfde   12. Yathzee'
 c=0; Do Until k>=1 & k<=13 & c=1 | k=14
   Rxcls(,15,15,15,79); Rxsetpos(15,15)
-  Rxcrstat(on); Pull k; Rxcrstat(off); Rxcls(16,24,6,24,79)
+  Do While Chars()<>0; rc=Rxgetkey('noecho'); End
+  Rxcrstat('on'); Pull k; Rxcrstat('off'); Rxcls(16,24,6,24,79); Rxsetpos(24,0)
   Select
     When k>=1 & k<=13 Then
       If Substr(punten,13*(sp-1)+k,1)=0 Then Do
         c=1; Call keuzepunten.punten
         punten=Overlay(1,punten,13*(sp-1)+k)
       End
-      Else Do
-        Rxsetpos(24,24); rc=Rxwrscr('Deze keuze is al eerder gemaakt.',23)
-      End
+      Else rc=Rxwrscr(Centre('Deze keuze is al eerder gemaakt',80),23)
     When k=14 Then sp=-1
-    Otherwise Rxsetpos(24,28); rc=Rxwrscr('Verkeerde keuze gemaakt.',23)
+    Otherwise rc=Rxwrscr(Centre('Verkeerde keuze gemaakt',80),23)
   End
 End
 
@@ -255,7 +302,7 @@ Select
     Do n=1 to 4; m=n+1
       If Substr(s,n,1)=Substr(s,m,1) Then s=Delstr(s,m,1)
     End n
-    If Length(s)<>5 Then s=Substr(s,1,5,0)
+    If Length(s)<>5 Then s=Substr(s,1,5,'0')
     Do n=1 to 5; st.n=Substr(s,n,1); End n
     If st.1=st.2-1 & st.2=st.3-1 & st.3=st.4-1 | st.2=st.3-1 & st.3=st.4-1,
       & st.4=st.5-1 Then punten=30
@@ -287,7 +334,27 @@ Return
 /* einde keuzepunten.punten */
 
 /* Einde */
-einde: Procedure Expose splrs sp scl. scr. naam.
+einde: Procedure Expose splrs sp scl. scr. naam. scr versie
+
+Call einde.winnaar
+Call einde.top10bijw
+
+Rxcls(16,24,0,24,79); rc=Rxwrscr(Centre('Opnieuw beginnen [J/N] ?',80),23)
+Do Until n='J' | n='N'
+  Do While Chars()<>0; rc=Rxgetkey('noecho'); End
+  Rxsetpos(24,53); n=Translate(Rxgetkey('noecho')); rc=Rxwrscr(n,23)
+  If n='J' Then sp=0
+  If n='N' Then Do
+    Rxcls(16,24,0,24,79); rc=Rxwrscr(Centre('Tot ziens!',80),23)
+    sp=-1; rc=Rxsleep(2)
+  End
+End
+
+Return
+/* einde einde */
+
+/* Na(a)m(en) winnaar(s) afbeelden */
+einde.winnaar: Procedure Expose splrs scl. scr. naam.
 
 Do n=1 to splrs; sct.n=scl.n+scr.n; If scl.n>63 Then sct.n=sct.n+35; End n
 sct=sct.1
@@ -307,16 +374,66 @@ Else Do
     Rxsetpos(16+Trunc(Abs(n/2+1/2),0),x); Say naamx.n
   End n
 End
-Rxcls(16,24,0,24,79); Rxsetpos(24,28); rc=Rxwrscr('Opnieuw beginnen [J/N] ?',23)
-Do Until n='J' | n='N'
-  Rxsetpos(24,53); n=Translate(Rxgetkey(noecho)); rc=Rxwrscr(n,23)
-  If n='J' Then sp=0
-  If n='N' Then Do
-    Rxcls(16,24,0,24,79); Rxsetpos(24,35); rc=Rxwrscr('Tot ziens!',23)
-    sp=-1; Rxsleep(2)
+
+Return
+/* einde einde.winnaar */
+
+/* Yathzee-Top-10 bijwerken */
+einde.top10bijw: Procedure Expose splrs scl. scr. naam. scr versie
+
+/* totaalscores spelers + namen controleren */
+Do n=splrs to 1 by -1
+  If naam.n='' Then naam.n=Substr('Yathzee v'versie,1,20)
+  Else naam.n=Substr(naam.n,1,20)
+  If scl.n>63 Then scl.n=scl.n+35
+  sc.n=naam.n||Right(scl.n+scr.n,3,'0')
+End n
+
+/* file openen + oude Yathzee-Top-10 inlezen */
+rc=Stream(scr,'c','open')
+Do n=10+splrs to splrs+1 by -1; sc.n=Charin(scr,,23); End n
+
+/* alle scores sorteren m.b.v. Bubblesort */
+grens=splrs+10
+Do splrs Until stop; grens=grens-1; n=0; stop=0
+  Do Until ok | n=grens; n=n+1; m=n+1; ok=0
+    If Substr(sc.n,21,3)>Substr(sc.m,21,3) Then Do
+      h=sc.n; sc.n=sc.m; sc.m=h; End
+    Else If n>splrs Then ok=1
+    Else If n=splrs Then Do; ok=1; stop=1; End
   End
 End
 
+/* nieuwe Yathzee-Top-10 wegschrijven + file sluiten */
+rc=Stream(scr,'c','seek =1')
+Do n=10+splrs to splrs+1 by -1; rc=Charout(scr,sc.n); End n
+rc=Stream(scr,'c','close')
+
 Return
-/* einde einde */
+/* einde einde.top10bijw */
+
+/* Speler wil Yathzee-Top-10 zien */
+top10zien: Procedure Expose scr splrs versie
+
+splrs='nowait'
+Rxcls(); Rxsetpos(2,0)
+rc=Charout(,Centre('Yathzee-Top-10  Yathzee v'versie,80)); Say; Say
+Queue 'ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»'
+Queue 'º Speler                           ³ Score             º'
+Queue 'ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶'
+Queue 'ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼'
+Do 3; Parse Pull q; rc=Charout(,Centre(q,80)); End
+rc=Stream(scr,'c','open read')
+Do n=8 to 17
+  rc=Charout(,Centre('º 'Right(n-7,2,'0')'. 'Charin(scr,,20)'         ³ '||,
+  Charin(scr,,3)'               º',80))
+End
+rc=Stream(scr,'c','close')
+Parse Pull q; rc=Charout(,Centre(q,80)); Say; Say; Say
+Do While Chars()<>0; rc=Rxgetkey('noecho'); End
+rc=Charout(,Centre('Druk op een toets om verder te gaan ...',80))
+rc=Rxgetkey('noecho')
+
+Return
+/* einde top10zien */
 
