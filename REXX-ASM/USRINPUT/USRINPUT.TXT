@@ -1,0 +1,61 @@
+                   UserInput v2.00 Manual  IBM PC DOS 7 REXX
+
+      --    Tired of (Parse) Pull, RxGetKey and CharIn ?  Try this!     --
+
+Arg 1:
+
+  at            byte                    aantal tekens
+  opt           byte                    opties
+       bit                                bv.
+       0 - cursor on/off                 1
+       1 - echo on/off                   1
+       2 - uppercase output              0  -> 01011011b = 5Bh
+       3 - insert                        1
+       4 - enter nodig                   1
+       5 - str weg bij wijzigen          0
+       6 - wel/niet cursor-pos opgegeven 1
+       7 - wel/niet rchr opgegeven       0
+     Let op dat de bitvolgorde goed is (laagste bit staat rechts)!
+  color         byte                    kleur attribuut (zie toel.)
+       Color Attribute Byte:
+
+                     Background   Foreground
+                          задд©   задд©
+       Attribute :     BL R G B I R G B    Blinking : BL = 1
+       Bit no.   :      7 6 5 4 3 2 1 0    Intense  : I  = 1
+
+       I = 0        I = 1                  R G B
+       black        gray                   0 0 0
+       blue         light blue             0 0 1
+       green        light green            0 1 0
+       cyan         light cyan             0 1 1
+       red          light red              1 0 0
+       magenta      light magenta          1 0 1
+       brown        yellow                 1 1 0
+       white        high-intensity white   1 1 1
+  chr           byte                    teken op lege plek
+  cposrc        word                    opgegeven cpos in row/col-formaat
+  rchr          byte                    replace character
+
+  N.B.: Als er bij opt een cpos is opgegeven moet die er ook bij staan bij
+        cposrc. Omgekeerd is ook waar: als er geen cpos en rchr zijn opgegeven
+        bij opt mogen ze er niet achter staan. alleen als er een rchr is
+        opgegeven en geen cpos, dan moet er wel wat staan bij cposrc, maar dit
+        wordt verder genegeerd.
+
+Arg 2:
+
+  str           max 255 bytes           input string
+
+Voorbeeld:
+
+  Say UsrInput('30DB1F2E050A2A'x,'Hello, This is USERINPUT v2.00')
+
+  In dit voorbeeld wordt gebruik gemaakt van een replace character, dit kan bv.
+  handig zijn bij een password input, hoewel ik dan zelf de voorkeur geef aan
+  een cursor aan, echo uit configuratie. Het replace character is een '*',
+  hex 2A. Het hok is hex 30, dus dec 48 lang. Het hok begin op row 5, col 10.
+
+
+              Have Fun!  Any more questions? E-mail to: jvk@dsv.nl
+
