@@ -1,6 +1,6 @@
 /*
-  SCRMERGE.BAT - Yathzee-Top-11 Merge Version 1.00 Hans van Kranenburg 1996
-                 Onderdeel van Yathzee v2.30
+  SCRMERGE.BAT - Yathzee-Top-11 Merge  Hans van Kranenburg 1996
+                 Onderdeel van Yathzee v2.40
 
   Leest 1 of meerdere Yathzee-Top-11 files in en schijft ‚‚n file weg met
   daarin de 11 hoogste scores
@@ -22,50 +22,55 @@
 */
 
 /* Main */
-versie='1.00'; jaar='1996'
-Message('begin')
+versie='2.40'
+Say Sourceline(2)
 If GetParams(Arg(1)) /* set variables: scr. nfiles */
   Then Do
     Say
     Do n=1 To nfiles-1
       If Top11File(scr.n)
         Then Do
-          Message('reading',scr.n)
-          OpenFile(scr.n,'read',0)
-          SetFPos(scr.n,6)
+          rc=CharOut(,'  Reading 'scr.n' ')
+          rc=Stream(scr.n,'c','open read')
+          rc=Stream(scr.n,'c','seek =6')
           Do a=1 To 11
-            Message('.')
+            rc=CharOut(,'.')
             b=((n-1)*11)+a
-            top.b=ReadEntry(scr.n)
+            top.b=(CharIn(scr.n,,20))(Right(C2D(CharIn(scr.n,,2)),3,0))
           End
           Say
-          CloseFile(scr)
+          rc=Stream(scr.n,'c','close')
         End
       Else Do
-        Message('default')
+        rc=CharOut(,'    Using default SCRMERGE values ')
         Do a=1 to 11
-          Message('.')
+          rc=CharOut(,'.')
           b=((n-1)*11)+a
           top.b=(Left('SCRMERGE v'versie,20))(000)
         End
         Say
       End
     End
-    Message('bubble')
+
+    Say '  BubbleSorting scores ...'
     Call BubbleSort
-    Message('preparing')
-    If PrepareFile(scr.nfiles)
+
+    Say '  Preparing outputfile ...'
+    rc=RxCreate(scr.nfiles)
+    If Top11File(scr.nfiles)
       Then Do
-        Message('writing',scr.nfiles)
-        OpenFile(scr.nfiles,,0)
-        SetFPos(scr.nfiles,6)
+        rc=Stream(scr.nfiles,'c','open write')
+        rc=CharOut(scr.nfiles,'YT11F')
+
+        rc=CharOut(,'  Writing 'scr.nfiles' ')
+        rc=Stream(scr.nfiles,'c','seek =6')
         Do n=(nfiles-1)*11 To (nfiles-1)*11-10 By -1
-          Message('.')
-          WriteEntry(scr.nfiles,top.n)
+          rc=CharOut(,'.')
+          rc=CharOut(scr.nfiles,(Left(top.n,20))(D2C(Right(top.n,3),2)))
         End
         Say
-        CloseFile(scr.nfiles)
-      Message('complete')
+        rc=Stream(scr.nfiles,'c','close')
+        Say '  Files merged.'
       End
   End
 
@@ -75,8 +80,15 @@ Exit
 /* Subs */
 GetParams: Procedure Expose scr. nfiles
 Arg poc; rc=1
-If poc='' Then Do; Message('noparam'); rc=0; End
+If poc=''
+  Then Do; rc=0
+    Do a=3 to 19; Say SourceLine(a); End
+  End
 nfiles=Words(poc)
+If nfiles<2
+  Then Do; rc=0
+    Say; Say '  Er moeten minstens twee filenames opgegeven worden.'
+  End
 Do n=1 To nfiles
   scr.n=Word(poc,n)
   If Pos('.',scr.n)=0 Then scr.n=scr.n||'.SCR'
@@ -89,39 +101,19 @@ Top11File: Procedure
 Arg scr
 ok=0
 Select
-  When OpenFile(scr,'read',5)<>'READY'
-    Then Message('openerror',scr)
-  When \(CharIn(scr,1,5)<>'YT11F' & GetFSize(scr)=0 & GetFSize(scr)<>247,
-    | CharIn(scr,1,5)='YT11F' & GetFSize(scr)<>0 & GetFSize(scr)=247)
-    Then Message('notYT11F',scr)
+  When Stream(scr,'c','open read')<>'READY'
+    Then Say '  Error opening 'scr
+  When \(CharIn(scr,1,5)<>'YT11F' & Stream(scr,'c','query size')=0,
+    & Stream(scr,'c','query size')<>247 | CharIn(scr,1,5)='YT11F',
+    & Stream(scr,'c','query size')<>0 & Stream(scr,'c','query size')=247)
+    Then Say '  'scr' is not a Yathzee-Top-11 file.'
   Otherwise
     ok=1
 End
-CloseFile(scr)
+rc=Stream(scr,'c','close')
 
 Return ok
 /* Einde Top11File */
-
-Message: Procedure
-Do n=1 To Arg()
-  p=Translate(Arg(n))
-  Select
-    When p='.' Then rc=CharOut(,'.')
-    When p='BEGIN' Then Say SourceLine(2)
-    When p='NOPARAM' Then Do a=3 to 19; Say SourceLine(a); End
-    When p='OPENERROR'
-      Then Do; Say '  Error opening 'Arg(n+1); n=n+1; End
-    When p='DEFAULT' Then rc=CharOut(,'    Using default SCRMERGE values ')
-    When p='NOTYT11F'
-      Then Do; Say '  'Arg(n+1)' is not a Yathzee-Top-11 file.'; n=n+1; End
-    When p='READING' Then Do; rc=CharOut(,'  Reading 'Arg(n+1)' '); n=n+1; End
-    When p='WRITING' Then Do; rc=CharOut(,'  Writing 'Arg(n+1)' '); n=n+1; End
-    When p='BUBBLE' Then Say '  BubbleSorting scores ...'
-    When p='PREPARING' Then Say '  Preparing outputfile ...'
-    When p='COMPLETE' Then Say '  Files merged.'
-  End
-End
-Return ''
 
 BubbleSort: Procedure Expose nfiles top.
 Do grens=((nfiles-1)*11)-1 To 1 By -1 Until ok; ok=1
@@ -131,34 +123,4 @@ Do grens=((nfiles-1)*11)-1 To 1 By -1 Until ok; ok=1
   End n
 End grens
 Return
-
-OpenFile:
-Return Left(Stream(Arg(1),'c','open 'Arg(2)),Arg(3))
-
-CloseFile:
-Return Left(Stream(Arg(1),'c','close'),0)
-
-GetFSize:
-Return Stream(Arg(1),'c','query size')
-
-SetFPos:
-Return Left(Stream(Arg(1),'c','seek 'Arg(2)),0)
-
-ReadEntry:
-Return (CharIn(Arg(1),,20))(Right(C2D(CharIn(Arg(1),,2)),3,0))
-
-WriteEntry:
-Return Left(CharOut(Arg(1),(Left(Arg(2),20))(D2C(Right(Arg(2),3),2))),0)
-
-PrepareFile: Procedure
-Arg scr
-rc=RxCreate(scr)
-ok=Top11File(scr)
-If ok
-  Then Do
-    OpenFile(scr,'write',0)
-    rc=CharOut(scr,'YT11F')
-    CloseFile(scr)
-  End
-Return ok
 

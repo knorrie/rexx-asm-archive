@@ -1,6 +1,6 @@
 /*
-  SCRCONV.BAT - Yathzee-Top-1x Convertor Version 1.00 Hans van Kranenburg 1996
-                Onderdeel van Yathzee v2.30
+  SCRCONV.BAT - Yathzee-Top-1x Convertor - Hans van Kranenburg 1997
+                Onderdeel van Yathzee v2.40
 
   Leest oude Yathzee-Top-1x file (v2.10 Top-10 en vanaf v2.11 Top-11) en
   converteert 'm naar nieuwe formaat (v2.20)
@@ -14,107 +14,73 @@
 */
 
 /* Main */
-versie='1.00'; jaar='1996'; top.=''
-Message('begin')
+versie='2.40'; top.=''
+Say SourceLine(2); Say SourceLine(3); Say
+
+/* Controleren of inputfile wel een oude Yathzee-Top-11 file is */
 If Top11File(Arg(1))
   Then Do
-    Message(,'reading')
-    OpenFile(scr,'read',0)
+    /* Inputfile inlezen */
+    rc=CharOut(,'  Reading ')
+    rc=Stream(scr,'c','open read')
     Do n=1 To 11
-      Message('.')
-      top.n=ReadEntry(scr)
+      rc=CharOut(,'.')
+      top.n=Left(CharIn(scr,,23)Left('SCRCONV v'versie,20)(000),23)
     End
-    CloseFile(scr)
-    Message(,'preparing')
-    PrepareFile(scr)
-    Message('writing')
-    OpenFile(scr,,0)
-    SetFPos(scr,6)
+    rc=Stream(scr,'c','close')
+
+    /* Outputfile aanmaken en openen */
+    Say; Say '  Preparing outputfile...'
+    rc=RxCreate(scr)
+    rc=Stream(scr,'c','open write')
+    rc=CharOut(scr,'YT11F')
+
+    /* Yathzee-Top-11 wegschrijven */
+    rc=CharOut(,'  Writing ')
+    rc=Stream(scr,'c','seek =6')
     Do n=1 To 11
-      Message('.')
-      WriteEntry(scr,top.n)
+      rc=CharOut(,'.')
+      rc=CharOut(scr,Left(top.n,20)D2C(Right(top.n,3),2))
     End
-    CloseFile(scr)
-  Message(,'complete')
+
+    /* Outputfile sluiten en berichten dat file geconverteerd is */
+    rc=Stream(scr,'c','close')
+    Say; Say '  File converted.'
   End
 
 Exit
 /* End Main */
 
-/* Subs */
 /* Yathzee-Top-11 file initialisatie */
 Top11File: Procedure Expose scr
 
-/* naam */
 Arg scr, .
-If scr='' Then Message('noparam')
-If Pos('.',scr)=0 Then scr=scr||'.SCR'
+If scr='' Then Do a=3 to 11; Say SourceLine(a); End
+Else Do
+  If Pos('.',scr)=0 Then scr=scr||'.SCR'
 
-ok=0
-If scr<>''
-  Then Do
-    /* controle file */
-    Select
-      When RxIsDir(scr)=''
-        Then Message(,'notYT11F',scr,'opnieuw')
-      When OpenFile(scr,,5)<>'READY'
-        Then Message(,'openerror',scr,'opnieuw')
-      When \(GetFSize(scr)=230 | GetFSize(scr)=253)
-        Then Message(,'notYT11F',scr,'opnieuw')
-      Otherwise
-        ok=1
+  ok=0; opened=0
+  If scr<>''
+    Then Do
+      /* controle file */
+      Select
+        When RxIsDir(scr)=''
+          Then Say '  'scr' does not exist.'
+        When Stream(scr,'c','open')<>'READY'
+          Then Say '  Error opening 'scr
+        When \(Stream(scr,'c','query size')=230,
+             | Stream(scr,'c','query size')=253)
+          Then Do
+            Say '  'scr' is not a Yathzee-Top-11 file.'
+            opened=1
+          End
+        Otherwise
+          ok=1; opened=1
+      End
+      If opened Then rc=Stream(scr,'c','close')
     End
-    CloseFile(scr)
-  End
+End
 
 Return ok
 /* Einde Top11File */
-
-Message: Procedure
-Do n=1 To Arg()
-  p=Translate(Arg(n))
-  Select
-    When p='.' Then rc=CharOut(,'.')
-    When p='' Then Say
-    When p='BEGIN' Then Say SourceLine(2)
-    When p='NOPARAM' Then Do a=3 to 11; Say SourceLine(a); End
-    When p='OPENERROR' Then Do; Say '  Error opening 'Arg(n+1); n=n+1; End
-    When p='NOTYT11F'
-      Then Do; Say '  'Arg(n+1)' is geen Yathzee-Top-11 file.'; n=n+1; End
-    When p='OPNIEUW'
-      Then Say '  Controleer het nummer en kies opnieuw of raadpleeg de',
-        'inlichtingendienst.'
-    When p='READING' Then rc=CharOut(,'  Reading ')
-    When p='WRITING' Then rc=CharOut(,'  Writing ')
-    When p='PREPARING' Then Say '  Preparing outputfile...'
-    When p='COMPLETE' Then Say '  File converted.'
-  End
-End
-Return ''
-
-OpenFile:
-Return Left(Stream(Arg(1),'c','open 'Arg(2)),Arg(3))
-
-CloseFile:
-Return Left(Stream(Arg(1),'c','close'),0)
-
-GetFSize:
-Return Stream(Arg(1),'c','query size')
-
-SetFPos:
-Return Left(Stream(Arg(1),'c','seek 'Arg(2)),0)
-
-ReadEntry:
-Return Left((CharIn(Arg(1),,23))(Left('SCRCONV v'versie,20)(000)),23)
-
-WriteEntry:
-Return Left(CharOut(Arg(1),(Left(Arg(2),20))(D2C(Right(Arg(2),3),2))),0)
-
-PrepareFile: Procedure
-Arg scr
-rc=RxCreate(scr)
-OpenFile(scr,'write',0)
-rc=CharOut(scr,'YT11F')
-CloseFile(scr)
-Return ''
 

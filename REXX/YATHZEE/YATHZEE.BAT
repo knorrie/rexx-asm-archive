@@ -1,22 +1,22 @@
 /*
 ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-บ   YATHZEE Versie 2.30  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX    บ
+บ   YATHZEE Versie 2.40  Hans van Kranenburg 1995-1997  IBM PC DOS 7.0 REXX    บ
 ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 
 Yathzee-history:
 
- Versie 1.00 In produktie gegaan: -
+ Versie 1.00  In produktie gegaan: -
 
- Versie 2.00 In produktie gegaan: -
+ Versie 2.00  In produktie gegaan: -
  Wijzigingen:
    Alles, het programma is totaal herschreven
 
- Versie 2.01 In produktie gegaan: -
+ Versie 2.01  In produktie gegaan: -
  Wijzigingen:
    Bij verkeerde keuze is '--' in 'ฤฤ' veranderd
    Type-foutje bij 'Is scl.sp>63 Then bonus=35' verbeterd
 
- Versie 2.02 In produktie gegaan: -
+ Versie 2.02  In produktie gegaan: -
  Wijzigingen:
    Gooien.stenen routine aangepast, nu ook voor stenen vasthouden
    Extra keuze bij gooien: Alle stenen vast
@@ -24,19 +24,19 @@ Yathzee-history:
    Veranderde manier opbouw openingsscherm; nu m.b.v. internal data queue
    Aanpassing routine scherm opbouwen, programmacode past nu op scherm
 
- Versie 2.10 In produktie gegaan: 20 april 1996
+ Versie 2.10  In produktie gegaan: 20 april 1996
  Wijzigingen:
    Er wordt nu een Yathzee-Top-10 bijgehouden
    Veel kleine dingen aangepast
 
- Versie 2.11 In produktie gegaan: 03 mei 1996
+ Versie 2.11  In produktie gegaan: 03 mei 1996
  Wijzigingen:
    De Yathzee-Top-10 is een Yathzee-Top-11 geworden
    Invoer van toetsenbord ook met Linein, doskey wordt niet gebruikt,
      dus niet al de keuzes in doskey-history
    Kleine stroomlijn- en schoonheidsfoutjes verholpen
 
- Versie 2.12 In produktie gegaan: 03 juni 1996
+ Versie 2.12  In produktie gegaan: 03 juni 1996
  Wijzigingen:
    Schrijfwijze aanroep rx-external + internal functions aangepast
      [bv. Rxcls() --> RxCls()]
@@ -50,7 +50,7 @@ Yathzee-history:
    Bonus aangepast, nu bonus bij punten>=63, niet bij >63, dit is officieel zo!
    Diverse kleine dingen aangepast/verbeterd
 
- Versie 2.13 In produktie gegaan: -
+ Versie 2.13  In produktie gegaan: -
  Wijzigingen:
    Bonus-probleem van versie 2.12 was nog niet helemaal opgelost, in de routine
      Einde wordt nog een keer het totaal aantal punten berekend, hier was ik
@@ -67,7 +67,7 @@ Yathzee-history:
    Keyboardbuffer niet leegmaken bij keuze, niet nodig
    Kleine dingen
 
- Versie 2.20 In produktie gegaan: 31 juli 1996
+ Versie 2.20  In produktie gegaan: 31 juli 1996
  Wijzigingen:
    Aangepast formaat Yathzee-Top-11 files, conversieprogramma vanaf v2.20
      bijgesloten, nu herkenning wel of geen YT11 file, scores worden als hex-
@@ -91,11 +91,11 @@ Yathzee-history:
      schema verandert
    In Einde-routine leesbaarheid programma verbeterd
 
- Versie 2.30 In produktie gegaan: -
+ Versie 2.30  In produktie gegaan: -
  Wijzigingen:
    gemkeu variabele is een array geworden
    Yathzee geeft nu advies voor keuze
-   eigen UserInput routine gemaakt om stomme Pull en Parse LineIn en RxGetKey
+   Eigen UserInput routine gemaakt om stomme Pull en Parse LineIn en RxGetKey
      te vervangen, buiten de vakjes typen is niet meer mogelijk!!!!!
    Sub ReadQueue verwijderd
    Subs uit pss verwijderd
@@ -106,6 +106,23 @@ Yathzee-history:
    Doordat UsrInput bij v1.01 zelf cursor aan/uit regelt m.b.v. uitgebreide
      RxCrStat hoeft Yathzee dit niet meer te doen
    Het advies bij keuze wordt knipperend weergegeven
+
+ Versie 2.40  In produktie gegaan: 31 januari 1997
+ Wijzigingen:
+   Door UserInput v2.01 zijn USRINPUT.BAT en RXCRSTAT.RX (uitgebreid) niet
+     meer meegeleverd
+   Vanwege UserInput v2.01 zijn de aanroepen van deze functie veranderd
+   De dobbelstenen staan nu iets verder van elkaar af
+   Lompe subs voor file in- en output en Yes enzo verwijderd
+   Subs blijken dus bij nader inzien niet erg handig, het maakt Yathzee
+     onnodig onoverzichtelijk en de scr* programma's veranderen toch niet
+     zo drastisch, laat staan dat ik met subs heen en weer zou gaan zitten
+     slepen. Maar ja, iedereen heeft wel eens iets geks in z'n kop dat er
+     uit moet em wat later weer allemaal teruggedraaid moet worden, omdat het
+     bij nader inzien maar lomp was. Amen. Einde preek. :-]
+   De sub Yes is twee keer (aangepast) in het programma opgenomen
+     Enter werkt hier niet meer als Ja-antwoord
+   Subs ook uit SCR* verwijderd
 
 Einde Yathzee-history
 
@@ -121,7 +138,7 @@ Programmastuctuurschema (boomdiagram)
 
   Subs worden niet aangegeven
 
- Yathzee v2.30
+ Yathzee v2.40
  รฤฤ[Z]Hoofdprogramma
  ณ   รฤฤ[SF]Controleren schermgrootte
  ณ   รฤฤ[SF]Top11File
@@ -147,30 +164,21 @@ Programmastuctuurschema (boomdiagram)
  ณ   ณ   ภฤฤ[Z]Nog een keer? & Tot ziens!
  ณ   รฤฤ[ZFM]Top11Zien
  ณ   ภฤฤ[Z]Yathzee verlaten
- รฤฤ[Z]Subs
- ณ   รฤฤ[SFM]OpenFile
- ณ   รฤฤ[SFM]CloseFile
- ณ   รฤฤ[SFM]GetFSize
- ณ   รฤฤ[SFM]SetFPos
- ณ   รฤฤ[SFM]ReadEntry
- ณ   รฤฤ[SF]WriteEntry
- ณ   รฤฤ[SFM]Yes
- ณ   ภฤฤ[SF]WaitForKey
- ภฤฤ[SFME]UsrInput
+ ภฤฤ[FME]UsrInput
 
 Einde Programmastructuurschema
 */
 
 /* Hoofdprogramma */
 RxCrStat('off')
-versie='2.30'; jaar='1996'
+versie='2.40'; jaar='1997'
 If ScrSiz(25,80) & Top11File(Arg(1)) /* set variables: scr */
   Then Do
     Do Until kt=14
       Call Opening
       Call SchermOpbouwen
       Do kt=1 to 13 /* keuze teller */
-        Do sp=1 To splrs
+        Do sp=1 To splrs Until kt=13
           Call Gooien
           Call Keuze
         End sp
@@ -212,18 +220,20 @@ If scr=''
     Parse Source . . execfile
     scr=(Left(execfile,LastPos('\',execfile)))('YATHZEE.SCR')
   End
+Else If Pos('.',scr)=0 Then scr=scr||'.SCR'
 
 /* controle en evt. aanmaken nieuwe file */
 ok=0
 Select
-  When OpenFile(scr,,5)<>'READY'
+  When Stream(scr,'c','open')<>'READY'
     Then Say 'Error bij openen 'scr'.'
-  When \(CharIn(scr,1,5)<>'YT11F' & GetFSize(scr)=0 & GetFSize(scr)<>247,
-       | CharIn(scr,1,5)='YT11F' & GetFSize(scr)<>0 & GetFSize(scr)=247)
+  When \(CharIn(scr,1,5)<>'YT11F' & Stream(scr,'c','query size')=0,
+       & Stream(scr,'c','query size')<>247 | CharIn(scr,1,5)='YT11F',
+       & Stream(scr,'c','query size')<>0 & Stream(scr,'c','query size')=247)
     Then Say scr' is geen Yathzee-Top-11 file.'
   Otherwise
     ok=1
-    If GetFSize(scr)=0
+    If Stream(scr,'c','query size')=0
       Then Do
         rc=CharOut(scr,'YT11F')
         Do 11
@@ -232,7 +242,7 @@ Select
         End
       End
 End
-CloseFile(scr)
+rc=Stream(scr,'c','close')
 
 Return ok
 /* Einde Top11File */
@@ -264,9 +274,9 @@ Do Until splrs<>'T'
   splrs=0
   RxSetPos(14,5)
   rc=RxWrScr("Aantal spelers [1-5] of 'T' voor Yathzee-Top-11 ?",23)
-  RxCls(,14,55,14,55)
+  RxCls(16,14,55,14,55)
   Do Until splrs>=1 & splrs<=5 | splrs='T'
-    RxSetPos(14,55); splrs=UsrInput(,,,,1,,0)
+    splrs=UsrInput('014717200E37'x)
     RxCls(16,22,0,22,79)
     Select
       When splrs='T' Then Top11Zien(scr)
@@ -280,9 +290,13 @@ End
 /* Informatie spelers opvragen (namen en initialen) */
 Do n=1 To splrs; v=15+n
   RxSetPos(v,5); rc=RxWrScr('Naam speler 'n':',23)
-  RxCls(,v,20,v,39); naam.n=Left(UsrInput(20,,1),20)
   RxSetPos(v,44); rc=RxWrScr('Initialen speler 'n':',23)
-  RxCls(,v,64,v,67); init.n=Left(UsrInput(4,,1),4)
+End n
+Do n=1 To splrs; v=15+n
+  RxSetPos(v,20); naam.n=Left(UsrInput('141B172E'x),20)
+  rc=RxWrScr(naam.n,23)
+  RxSetPos(v,64); init.n=Left(UsrInput('041B172E'x),4)
+  rc=RxWrScr(init.n,23)
 End n
 
 /* Variabelen voor puntentelling beginwaarden geven */
@@ -323,7 +337,7 @@ Return ''
 /* Einde SchermOpbouwen */
 
 /* Gooien */
-Gooien: Procedure Expose sp naam.sp init.sp st.
+Gooien: Procedure Expose sp naam.sp st.
 
 v.=0 /* steen vast */
 RxCls(,14,20,14,38)
@@ -331,7 +345,7 @@ RxSetPos(14,7); rc=RxWrScr(sp,9)
 RxSetPos(14,19); rc=RxWrScr(naam.sp,9)
 RxSetPos(24,0); rc=RxWrScr('Worp',23)
 RxCls(,15,0,19,79)
-Say 'Welke stenen moeten vastgehouden worden bij de volgende worp?'
+Say 'Welke stenen moeten vastgehouden worden bij de volgende worp?    ( )'
 Say '  1. Steen 1    5. Steen 5'
 Say '  2. Steen 2    V. Alle stenen vasthouden'
 Say '  3. Steen 3    L. Alle stenen los'
@@ -339,11 +353,13 @@ Say '  4. Steen 4    G. Volgende worp'
 Do worp=1 To 3
   RxSetPos(24,5); rc=RxWrScr(worp,23)
   Do n=1 To 5
-    If \v.n Then Do; st.n=Random(1,6); RxSetPos(22,n*7+18); Say st.n; End
-  End n
+    If \v.n Then Do; st.n=Random(1,6); RxSetPos(22,n*8+16); Say st.n; End
+  End n; n=''
   If worp<3
     Then Do Until n='G' | n=''
-      RxSetPos(15,62); n=UsrInput(,,,,1,,0)
+      n=UsrInput('014507200F3E'x)
+      RxSetPos(15,66)
+      Say n
       RxCls(16,24,6,24,79)
       Select
         When n>=1 & n<=5 Then
@@ -351,7 +367,7 @@ Do worp=1 To 3
           Else Stenen('vast',n,n)
         When n='V' Then Stenen('vast')
         When n='L' Then Stenen('los')
-        When n='G' | n='' Then Nop
+        When n='G' | n='' | n=0 Then Nop
         Otherwise
           RxSetPos(24,6)
           rc=RxWrScr(Centre('Verkeerde keuze ฤฤ Toets 1, 2, 3, 4, 5, V, L of',
@@ -378,9 +394,9 @@ Do n=st1 To st2
   If v.n<>lv
     Then Do
       v.n=lv
-      RxSetPos(21,16+7*n); rc=RxWrScr('ษอออป',kl)
-      RxSetPos(22,16+7*n); rc=RxWrScr('บ 'st.n' บ',kl)
-      RxSetPos(23,16+7*n); rc=RxWrScr('ศอออผ',kl)
+      RxSetPos(21,14+8*n); rc=RxWrScr('ษอออป',kl)
+      RxSetPos(22,14+8*n); rc=RxWrScr('บ 'st.n' บ',kl)
+      RxSetPos(23,14+8*n); rc=RxWrScr('ศอออผ',kl)
     End
 End n
 
@@ -409,7 +425,7 @@ If adv_n<>''
   End
 ok=0
 Do Until k>=1 & k<=13 & ok=1 | k=14
-  RxCls(,15,15,15,79); k=UsrInput(2,adv_n,,,,0,,1)
+  k=UsrInput('027707200F0F'x,adv_n)
   RxCls(16,24,0,24,79)
   Select
     When k>=1 & k<=13 & DataType(k,'n')
@@ -513,7 +529,14 @@ If punten=0 & kt<>13
     rc=RxWrScr(Centre('Deze keuze levert geen punten op! Doorgaan [J/N]',
       '?',80),23)
     RxSetPos(24,0)
-    If \Yes('J','N') Then ok=0
+    Do Until n='J' | n='N'
+      n=UsrInput('01040020'x)
+      Select
+        When n='J' Then ok=1
+        When n='N' Then ok=0
+        Otherwise Nop
+      End
+    End
     RxCls(16,24,0,24,79)
   End
 
@@ -595,8 +618,10 @@ Do n=splrs To 1 By -1
 End n
 
 /* file openen + oude Yathzee-Top-11 inlezen */
-OpenFile(scr,,0); SetFPos(scr,6)
-Do n=11+splrs To splrs+1 By -1; sc.n=ReadEntry(scr); End n
+rc=Stream(scr,'c','open'); rc=Stream(scr,'c','seek =6')
+Do n=11+splrs To splrs+1 By -1
+  sc.n=(CharIn(scr,,20))(Right(C2D(CharIn(scr,,2)),3,0))
+End n
 
 n=n+1
 If Right(sc.n,3)<sct
@@ -615,25 +640,33 @@ If Right(sc.n,3)<sct
     End grens
 
     /* nieuwe Yathzee-Top-11 wegschrijven */
-    SetFPos(scr,6)
-    Do n=11+splrs To splrs+1 By -1; WriteEntry(scr,sc.n); End n
+    rc=Stream(scr,'c','seek =6')
+    Do n=11+splrs To splrs+1 By -1
+      rc=CharOut(scr,(Left(sc.n,20))(D2C(Right(sc.n,3),2)))
+    End n
   End
 
 /* file sluiten */
-CloseFile(scr)
+rc=Stream(scr,'c','close')
 
 /* Nog een keer? & Tot ziens! */
 RxSetPos(24,0); rc=RxWrScr(Centre('Opnieuw beginnen [J/N] ?',80),23)
-RxSetPos(24,0) /* dit i.v.m. setpos in usrinput, geeft anders error */
-If Yes('J','N')
-  Then kt=15 /* Bij keuze 14 dan kt wordt 14 bij beeindgen kt-loop in
+Do Until n='J' | n='N'
+  n=UsrInput('01040020'x)
+  Select
+    When n='J' Then kt=15
+             /* Bij keuze 14 dan kt wordt 14 bij beeindgen kt-loop in
                 hoofdprogramma, bij nog een spelletje wordt
                 afsluiten voorkomen door kt niet meer 14 te laten zijn.
                 (Waarde die hier aan kt wordt toegekend moet groter als 14
                 zijn.) */
-Else Do
-  RxSetPos(24,0); rc=RxWrScr(Centre('Tot ziens!',80),23)
-  RxSleep(2)
+    When n='N'
+      Then Do
+        RxSetPos(24,0); rc=RxWrScr(Centre('Tot ziens!',80),23)
+        RxSleep(2)
+      End
+    Otherwise Nop
+  End
 End
 
 Return ''
@@ -650,61 +683,23 @@ Queue 'บ Speler                           ณ Score             บ'
 Queue 'วฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ'
 Queue 'ศออออออออออออออออออออออออออออออออออฯอออออออออออออออออออผ'
 Do 3; Parse Pull q; rc=CharOut(,Centre(q,80)); End
-OpenFile(scr,'read',0)
-SetFPos(scr,6)
+rc=Stream(scr,'c','open read')
+rc=Stream(scr,'c','seek =6')
 Do n=8 To 18
-  a=ReadEntry(scr)
+  a=(CharIn(scr,,20))(Right(C2D(CharIn(scr,,2)),3,0))
   rc=CharOut(,Centre(('บ ')(Right(n-7,2,'0'))('. ')(Left(a,20))('         ')||,
   ('ณ ')(Right(a,3))('               บ'),80))
 End
-CloseFile(scr)
+rc=Stream(scr,'c','close')
 Parse Pull q; rc=CharOut(,Centre(q,80))
 Say; Say; rc=Charout(,Centre('Druk op een toets om verder te gaan ...',80))
-WaitForKey()
-
+Do Until Chars()=0; rc=RxGetKey('noecho'); End
 Return ''
 /* Einde Top11Zien */
 
-/* Subs */
-OpenFile:
-Return Left(Stream(Arg(1),'c','open 'Arg(2)),Arg(3))
-
-CloseFile:
-Return Left(Stream(Arg(1),'c','close'),0)
-
-GetFSize:
-Return Stream(Arg(1),'c','query size')
-
-SetFPos:
-Return Left(Stream(Arg(1),'c','seek 'Arg(2)),0)
-
-ReadEntry:
-Return (CharIn(Arg(1),,20))(Right(C2D(CharIn(Arg(1),,2)),3,0))
-
-WriteEntry:
-Return Left(CharOut(Arg(1),(Left(Arg(2),20))(D2C(Right(Arg(2),3),2))),0)
-
-Yes: Procedure
-Arg yes, no
-Do Until n=yes | n=no
-  n=UsrInput(,,0,0,1,,0)
-  Select
-    When n='' Then Do; n=yes; rc=1; End
-    When n=yes Then rc=1
-    When n=no Then rc=0
-    Otherwise Nop
-  End
-End
-Return rc
-
-WaitForKey: Procedure
-Do Until Chars()=0; rc=RxGetKey('noecho'); End
-Return ''
-
-/* Einde Subs */
 /*
 ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-บ EOF YATHZEE Versie 2.30  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX  บ
+บ EOF YATHZEE Versie 2.40  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX  บ
 ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 */
 
