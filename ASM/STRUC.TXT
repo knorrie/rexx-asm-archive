@@ -1,0 +1,21 @@
+      ARGS     STRUC
+               DW   3 DUP(?)  ;Saved BP and return address
+      ARG3     DW   ?
+      ARG2     DW   ?
+      ARG1     DW   ?
+      ARGS     ENDS
+           ...........
+               PUSH BP                 ;save BP register
+               MOV  BP,SP              ;Use BP to address stack
+               MOV   ...,[BP].ARG2     ;retrieve second argument
+               (etc.)
+    This example uses something called a structure, which is only available
+    in the large assembler; furthermore, it uses it without allocating it,
+    which is not a well-documented option.  However, I find the above
+    approach generally pleasing.  The STRUC is like a DSECT in that it
+    establishes labels as being offset a certain distance from an arbitrary
+    point; these labels are then used in the body of code by beginning them
+    with a period; the construction ".ARG2" means, basically, " +
+    (ARG2-ARGS)."
+
+
