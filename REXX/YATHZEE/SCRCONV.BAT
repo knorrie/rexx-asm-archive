@@ -1,12 +1,14 @@
 /*
-  SCRCONV.BAT - Yathzee-Top-1x convertor Version 1.00 Hans van Kranenburg 1996
-                Onderdeel van Yathzee v2.20
+  SCRCONV.BAT - Yathzee-Top-1x Convertor Version 1.00 Hans van Kranenburg 1996
+                Onderdeel van Yathzee v2.30
 
   Leest oude Yathzee-Top-1x file (v2.10 Top-10 en vanaf v2.11 Top-11) en
   converteert 'm naar nieuwe formaat (v2.20)
 
   Parameters:
-    1: filename van Yathzee-Top-1x file
+    - filename van Yathzee-Top-1x file
+    > als een filename wordt opgegeven zonder extensie wordt .SCR toegevoegd
+      type om dit te voorkomen wel een punt, maar geen extensie
 
   bv. "SCRCONV.BAT \YATHZEE\YATHZEE.SCR"
 */
@@ -40,13 +42,13 @@ Exit
 /* End Main */
 
 /* Subs */
-
 /* Yathzee-Top-11 file initialisatie */
 Top11File: Procedure Expose scr
 
 /* naam */
 Arg scr, .
 If scr='' Then Message('noparam')
+If Pos('.',scr)=0 Then scr=scr||'.SCR'
 
 ok=0
 If scr<>''
@@ -76,7 +78,7 @@ Do n=1 To Arg()
     When p='' Then Say
     When p='BEGIN' Then Say SourceLine(2)
     When p='NOPARAM' Then Do a=3 to 11; Say SourceLine(a); End
-    When p='OPENERROR' Then Do; Say '  Error opening 'Arg(n+1)'.'; n=n+1; End
+    When p='OPENERROR' Then Do; Say '  Error opening 'Arg(n+1); n=n+1; End
     When p='NOTYT11F'
       Then Do; Say '  'Arg(n+1)' is geen Yathzee-Top-11 file.'; n=n+1; End
     When p='OPNIEUW'
@@ -115,6 +117,4 @@ OpenFile(scr,'write',0)
 rc=CharOut(scr,'YT11F')
 CloseFile(scr)
 Return ''
-
-/* End Subs */
 

@@ -1,6 +1,6 @@
 /*
 ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-บ   YATHZEE Versie 2.20  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX    บ
+บ   YATHZEE Versie 2.30  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX    บ
 ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 
 Yathzee-history:
@@ -91,6 +91,22 @@ Yathzee-history:
      schema verandert
    In Einde-routine leesbaarheid programma verbeterd
 
+ Versie 2.30 In produktie gegaan: -
+ Wijzigingen:
+   gemkeu variabele is een array geworden
+   Yathzee geeft nu advies voor keuze
+   eigen UserInput routine gemaakt om stomme Pull en Parse LineIn en RxGetKey
+     te vervangen, buiten de vakjes typen is niet meer mogelijk!!!!!
+   Sub ReadQueue verwijderd
+   Subs uit pss verwijderd
+   Swap variabelen in bubblesort(Einde) nu m.b.v. REXX internal queue
+   In de sub Yes geldt enter ook als YES
+   Yathzee geeft bij de laatste keuze (1 mogelijkheid over) advies voor keuze
+   UsrInput is een externe sub geworden
+   Doordat UsrInput bij v1.01 zelf cursor aan/uit regelt m.b.v. uitgebreide
+     RxCrStat hoeft Yathzee dit niet meer te doen
+   Het advies bij keuze wordt knipperend weergegeven
+
 Einde Yathzee-history
 
 Programmastuctuurschema (boomdiagram)
@@ -101,82 +117,64 @@ Programmastuctuurschema (boomdiagram)
   F=Wordt als Functie aangeroepen
   M=Routine die van verschillende plaatsen wordt aangeroepen
   N=Staat niet op deze plek in programma, subroutines hier niet genoemd
+  E=Externe routine
 
- Yathzee v2.20
+  Subs worden niet aangegeven
+
+ Yathzee v2.30
  รฤฤ[Z]Hoofdprogramma
  ณ   รฤฤ[SF]Controleren schermgrootte
  ณ   รฤฤ[SF]Top11File
- ณ   ณ   รฤฤ[SFN]OpenFile
- ณ   ณ   รฤฤ[SFN]CloseFile
- ณ   ณ   ภฤฤ[SFN]GetFSize
  ณ   รฤฤ[S]Opening
  ณ   ณ   รฤฤ[Z]Openingsscherm afbeelden
- ณ   ณ   ณ   ภฤฤ[SFN]ReadQueue
  ณ   ณ   รฤฤ[Z]Informatie spelers opvragen (aantal spelers)
- ณ   ณ   ณ   รฤฤ[SFN]Top11Zien
- ณ   ณ   ณ   ภฤฤ[SFN]UserInput
+ ณ   ณ   ณ   ภฤฤ[SFN]Top11Zien
  ณ   ณ   รฤฤ[Z]Informatie spelers opvragen (namen en initialen)
- ณ   ณ   ณ   ภฤฤ[SFN]UserInput
  ณ   ณ   ภฤฤ[Z]Variabelen voor puntentelling beginwaarden geven
  ณ   รฤฤ[S]SchermOpbouwen
  ณ   ณ   ภฤฤ[SFN]Stenen
  ณ   รฤฤ[S]Gooien
- ณ   ณ   รฤฤ[SFM]Stenen
- ณ   ณ   ภฤฤ[SFN]UserInput
+ ณ   ณ   ภฤฤ[SFM]Stenen
  ณ   รฤฤ[S]Keuze
- ณ   ณ   รฤฤ[SF]Punten
- ณ   ณ   รฤฤ[SF]TotaalSc
- ณ   ณ   ณ   ภฤฤ[SFN]Yes
- ณ   ณ   ภฤฤ[SFN]UserInput
+ ณ   ณ   รฤฤ[S]Verzamel
+ ณ   ณ   รฤฤ[SF]Advies
+ ณ   ณ   ณ   ภฤฤ[SFN]Punten
+ ณ   ณ   รฤฤ[SFM]Punten
+ ณ   ณ   ภฤฤ[SF]TotaalSc
  ณ   รฤฤ[S]Einde
  ณ   ณ   รฤฤ[Z]Na(a)m(en) winnaar(s) afbeelden
  ณ   ณ   รฤฤ[Z]Yathzee-Top-11 bijwerken
- ณ   ณ   ณ   รฤฤ[SFN]OpenFile
- ณ   ณ   ณ   รฤฤ[SFN]CloseFile
- ณ   ณ   ณ   รฤฤ[SFN]SetFPos
- ณ   ณ   ณ   รฤฤ[SFN]ReadEntry
- ณ   ณ   ณ   ภฤฤ[SFN]WriteEntry
  ณ   ณ   ภฤฤ[Z]Nog een keer? & Tot ziens!
- ณ   ณ       ภฤฤ[SFN]Yes
  ณ   รฤฤ[ZFM]Top11Zien
- ณ   ณ   รฤฤ[SFN]OpenFile
- ณ   ณ   รฤฤ[SFN]CloseFile
- ณ   ณ   รฤฤ[SFN]SetFPos
- ณ   ณ   รฤฤ[SFN]ReadEntry
- ณ   ณ   รฤฤ[SFN]ReadQueue
- ณ   ณ   ภฤฤ[SFN]WaitForKey
  ณ   ภฤฤ[Z]Yathzee verlaten
- ภฤฤ[Z]Subs
-     รฤฤ[SFM]OpenFile
-     รฤฤ[SFM]CloseFile
-     รฤฤ[SFM]GetFSize
-     รฤฤ[SFM]SetFPos
-     รฤฤ[SFM]ReadEntry
-     รฤฤ[SF]WriteEntry
-     รฤฤ[SFM]ReadQueue
-     รฤฤ[SFM]UserInput
-     รฤฤ[SFM]Yes
-     ณ   ภฤฤ[SFN]UserInput
-     ภฤฤ[SF]WaitForKey
-         ภฤฤ[SFN]UserInput
+ รฤฤ[Z]Subs
+ ณ   รฤฤ[SFM]OpenFile
+ ณ   รฤฤ[SFM]CloseFile
+ ณ   รฤฤ[SFM]GetFSize
+ ณ   รฤฤ[SFM]SetFPos
+ ณ   รฤฤ[SFM]ReadEntry
+ ณ   รฤฤ[SF]WriteEntry
+ ณ   รฤฤ[SFM]Yes
+ ณ   ภฤฤ[SF]WaitForKey
+ ภฤฤ[SFME]UsrInput
 
 Einde Programmastructuurschema
 */
 
 /* Hoofdprogramma */
 RxCrStat('off')
-versie='2.20'; jaar='1996'
+versie='2.30'; jaar='1996'
 If ScrSiz(25,80) & Top11File(Arg(1)) /* set variables: scr */
   Then Do
-    Do Until sp=-1
+    Do Until kt=14
       Call Opening
       Call SchermOpbouwen
-      Do 13 Until sp=-1
-        Do sp=1 To splrs Until sp=-1
+      Do kt=1 to 13 /* keuze teller */
+        Do sp=1 To splrs
           Call Gooien
           Call Keuze
         End sp
-      End
+      End kt
       Call Einde
     End
     Top11Zien(scr)
@@ -212,7 +210,7 @@ Arg scr .
 If scr=''
   Then Do
     Parse Source . . execfile
-    scr=(SubStr(execfile,1,LastPos('\',execfile)))('YATHZEE.SCR')
+    scr=(Left(execfile,LastPos('\',execfile)))('YATHZEE.SCR')
   End
 
 /* controle en evt. aanmaken nieuwe file */
@@ -240,7 +238,7 @@ Return ok
 /* Einde Top11File */
 
 /* Opening */
-Opening: Procedure Expose splrs naam. init. gemkeu scl. scr. scr versie jaar
+Opening: Procedure Expose splrs naam. init. gemkeu. scl. scr. scr versie jaar
 
 /* Openingsscherm afbeelden */
 Do Until splrs<>'T'
@@ -256,10 +254,10 @@ Do Until splrs<>'T'
   Queue 'Û    Û   Û         Û   Û    Û   Û '
   Queue 'Û     Û  ÛÜÜÜÜÜÜ  Û     Û  Û     Û'
   RxCls(16); Say; Say
-  ReadQueue(11,'w')
+  Do 11; Parse Pull q; rc=RxWrScr(Centre(q,80),18); End
   Do 11; Say; End
-  rc=RxWrScr(Centre('Versie 'versie'  Hans van Kranenburg 'jaar'  IBM PC DOS',
-    '7.0 REXX',80),23)
+  rc=RxWrScr(Centre('YATHZEE Versie 'versie'  Hans van Kranenburg 'jaar'  IBM',
+  'PC DOS 7.0 REXX',80),23)
   If splrs<>'T' Then RxSleep(2)
 
   /* Informatie spelers opvragen (aantal spelers) */
@@ -268,7 +266,7 @@ Do Until splrs<>'T'
   rc=RxWrScr("Aantal spelers [1-5] of 'T' voor Yathzee-Top-11 ?",23)
   RxCls(,14,55,14,55)
   Do Until splrs>=1 & splrs<=5 | splrs='T'
-    RxSetPos(14,55); splrs=UserInput()
+    RxSetPos(14,55); splrs=UsrInput(,,,,1,,0)
     RxCls(16,22,0,22,79)
     Select
       When splrs='T' Then Top11Zien(scr)
@@ -282,25 +280,22 @@ End
 /* Informatie spelers opvragen (namen en initialen) */
 Do n=1 To splrs; v=15+n
   RxSetPos(v,5); rc=RxWrScr('Naam speler 'n':',23)
-  RxCls(,v,20,v,39); naam.n=Left(UserInput('P'),20)
-  RxCls(16,v,40,v,79);RxCls(16,v+1,0,v+1,66)
+  RxCls(,v,20,v,39); naam.n=Left(UsrInput(20,,1),20)
   RxSetPos(v,44); rc=RxWrScr('Initialen speler 'n':',23)
-  RxCls(,v,64,v,67); init.n=Left(UserInput('P'),4)
-  RxCls(16,v,68,v,79); RxCls(16,v+1,0,v+1,79); RxCls(16,v+2,0,v+2,30)
+  RxCls(,v,64,v,67); init.n=Left(UsrInput(4,,1),4)
 End n
 
 /* Variabelen voor puntentelling beginwaarden geven */
-gemkeu=Copies('0',splrs*13) /* gemaakte keuzes*/; scl.=0; scr.=0
+gemkeu.=0 /* gemaakte keuzes*/; scl.=0; scr.=0
 
-Return
+Return ''
 /* Einde Opening */
 
 /* Scherm opbouwen */
 SchermOpbouwen: Procedure Expose versie splrs init.
 
 RxCls(16,24,0,24,79); RxCls(,0,0,23,79)
-rc=RxWrScr(Right('YATHZEE Versie 'versie,49),23)
-rc=RxWrScr(Right('Hans van Kranenburg',31),23); Say
+rc=RxWrScr(Centre('YATHZEE Versie 'versie,80),23); Say
 rc=CharOut(,'ษอออออออออออออหออออัออออัออออัออออัออออหออออออออออออออหออออัอออ'||,
 'อัออออัออออัออออปบEnen         บ    ณ    ณ    ณ    ณ    บDrie dezelfde บ   '||,
 ' ณ    ณ    ณ    ณ    บบTween       บ    ณ    ณ    ณ    ณ    บVier dezelfde'||,
@@ -324,7 +319,7 @@ End n
 Do n=10 To 12; Do q=1 To splrs; RxSetPos(n,13+5*q); Say 0; End q; End n
 Do n=11 To 13; Do q=1 To splrs; RxSetPos(n,53+5*q); Say 0; End q; End n
 
-Return
+Return ''
 /* Einde SchermOpbouwen */
 
 /* Gooien */
@@ -335,40 +330,39 @@ RxCls(,14,20,14,38)
 RxSetPos(14,7); rc=RxWrScr(sp,9)
 RxSetPos(14,19); rc=RxWrScr(naam.sp,9)
 RxSetPos(24,0); rc=RxWrScr('Worp',23)
+RxCls(,15,0,19,79)
+Say 'Welke stenen moeten vastgehouden worden bij de volgende worp?'
+Say '  1. Steen 1    5. Steen 5'
+Say '  2. Steen 2    V. Alle stenen vasthouden'
+Say '  3. Steen 3    L. Alle stenen los'
+Say '  4. Steen 4    G. Volgende worp'
 Do worp=1 To 3
   RxSetPos(24,5); rc=RxWrScr(worp,23)
   Do n=1 To 5
     If \v.n Then Do; st.n=Random(1,6); RxSetPos(22,n*7+18); Say st.n; End
   End n
   If worp<3
-    Then Do
-      RxCls(,15,0,19,79)
-      Say 'Welke stenen moeten vastgehouden worden bij de volgende worp?'
-      Say '  1. Steen 1    5. Steen 5'
-      Say '  2. Steen 2    V. Alle stenen vasthouden'
-      Say '  3. Steen 3    L. Alle stenen los'
-      Say '  4. Steen 4    G. Volgende worp'
-      Do Until n='G' | C2D(n)=13
-        RxSetPos(15,62); n=UserInput()
-        RxCls(16,24,6,24,79)
-        Select
-          When n>=1 & n<=5 Then
-            If v.n Then Stenen('los',n,n)
-            Else Stenen('vast',n,n)
-          When n='V' Then Stenen('vast')
-          When n='L' Then Stenen('los')
-          When n='G' | C2D(n)=13 Then Nop
-          Otherwise
-            RxSetPos(24,6)
-            rc=RxWrScr(Centre('Verkeerde keuze ฤฤ Toets 1, 2, 3, 4, 5, V, L of',
-              'G',68),23)
-        End
+    Then Do Until n='G' | n=''
+      RxSetPos(15,62); n=UsrInput(,,,,1,,0)
+      RxCls(16,24,6,24,79)
+      Select
+        When n>=1 & n<=5 Then
+          If v.n Then Stenen('los',n,n)
+          Else Stenen('vast',n,n)
+        When n='V' Then Stenen('vast')
+        When n='L' Then Stenen('los')
+        When n='G' | n='' Then Nop
+        Otherwise
+          RxSetPos(24,6)
+          rc=RxWrScr(Centre('Verkeerde keuze ฤฤ Toets 1, 2, 3, 4, 5, V, L of',
+            'G',68),23)
       End
     End
 End worp
-Stenen('los'); RxCls(16,24,0,24,5)
+Stenen('los')
+/* RxCls(16,24,0,24,5) : wel/niet 'Worp 3' afbeelden */
 
-Return
+Return ''
 /* Einde Gooien */
 
 /* Bepaald aantal stenen los/vast                 ฺฤฤฤ default ฤฤฤฟ
@@ -394,85 +388,112 @@ Return ''
 /* Einde Stenen */
 
 /* Keuze maken */
-Keuze: Procedure Expose gemkeu sp scl.sp scr.sp st.
+Keuze: Procedure Expose sp gemkeu. scl.sp scr.sp st. kt
 
-v.=0; v.1='NV'; v.2='NV'; v.3='' /* initialisatie Verzamel */
+Call Verzamel
+Parse Value Advies() With adv_n '|' adv_str '|' laatste
 RxCls(,15,0,19,79)
 Say 'Maak uw keuze:'
 Say '  1. Enen     5. Vijven           9. Volle bak       13. Vrije keuze'
 Say '  2. Tween   6. Zessen          10. Kleine straat   14. Einde spel'
 Say '  3. Drien   7. Drie dezelfde   11. Grote straat'
-Say '  4. Vieren   8. Vier dezelfde   12. Yathzee'
+rc=CharOut(,'  4. Vieren   8. Vier dezelfde   12. Yathzee         ')
+If adv_n<>''
+  Then Do
+    Say 'Enter: 'adv_str
+    If \laatste
+      Then Do
+        RxSetPos(0,1)
+        rc=RxWrScr('ฏ 'adv_str' ฎ',151)
+      End
+  End
 ok=0
 Do Until k>=1 & k<=13 & ok=1 | k=14
-  RxCls(,15,15,15,79); k=UserInput('L')
+  RxCls(,15,15,15,79); k=UsrInput(2,adv_n,,,,0,,1)
   RxCls(16,24,0,24,79)
   Select
     When k>=1 & k<=13 & DataType(k,'n')
       Then Do
-        If \SubStr(gemkeu,13*(sp-1)+k,1)
+        If \gemkeu.sp.k
           Then Do
             p=Punten(k)
-            If TotaalSc(p)
-              Then Do; gemkeu=Overlay(1,gemkeu,13*(sp-1)+k); ok=1; End
+            If TotaalSc(p); Then Do; gemkeu.sp.k=1; ok=1; End
           End
         Else rc=RxWrScr(Centre('Deze keuze is al eerder gemaakt.',80),23)
       End
-    When k=14 Then sp=-1
+    When k=14 Then kt=13
     Otherwise rc=RxWrScr(Centre('Verkeerde keuze gemaakt.',80),23)
   End
 End
+If adv_n<>'' Then RxCls(16,0,1,0,21)
 
-Return
+Return ''
 /* Einde Keuze */
 
-/* Punten voor gemaakte keuze vaststellen */
-Punten: Procedure Expose st. v.
+/* Verzamelen van stenen */
+Verzamel: Procedure Expose st. v.
 
-Arg k
-/* hoeveel keer is een steen gegooid? (verzamel) */
-If k<=12 & v.1='NV'
-  Then Do
-    v.1='VZ'
-    Do n=1 To 5
-      q=st.n
-      v.1.q=v.1.q+1
-    End n
-  End
+/* initialisatie */
+v.=0; v.3=''
 
-/* hoeveel keer is hoeveel keer een steen gegooid? (verzamel) */
-If (k>=7 & k<=9 | k=12) & v.2='NV'
-  Then Do
-    v.2='VZ'
-    Do n=1 To 6
-      q=v.1.n
-      v.2.q=v.2.q+1
-    End n
-  End
+/* hoeveel keer is een steen gegooid? (verzamelen st.{1-5}) */
+Do n=1 To 5; q=st.n; v.1.q=v.1.q+1; End n
+
+/* hoeveel keer is hoeveel keer een steen gegooid? (verzamelen v.1.{1-6}) */
+Do n=1 To 6; q=v.1.n; v.2.q=v.2.q+1; End n
 
 /* plak van steen >=1 keer gegooid */
-If (k=10 | k=11) & v.3=''
-  Then Do n=1 To 6
-    If v.1.n>=1 Then v.3=(v.3)(1)
-    Else v.3=(v.3)(0)
-  End n
+Do n=1 To 6; If v.1.n>=1 Then v.3=(v.3)(1); Else v.3=(v.3)(0); End n
 
 /* waarden van alle stenen optellen in v.4 */
-If (k=7 | k=8 | k=13) & v.4=0
-  Then Do n=1 To 5
-    v.4=v.4+st.n
-  End n
+Do n=1 To 5; v.4=v.4+st.n; End n
 
-/* punten gemaakte keuze ophalen */
+Return ''
+/* Einde Verzamel */
+
+/* Kiesadvies: er wordt bekeken of een van de keuzes tussen 12 en 7 punten
+   zou opleveren, ook bij laatste keuze maken geeft advies, de enige over-
+   geblevene, return is nummer keuze en tekst */
+Advies: Procedure Expose v. sp gemkeu. kt
+
+adv=''
+k.1='1|Enen'
+k.2='2|Tween'
+k.3='3|Drien'
+k.4='4|Vieren'
+k.5='5|Vijven'
+k.6='6|Zessen'
+k.7='7|Drie dezelfde'
+k.8='8|Vier dezelfde'
+k.9='9|Volle bak'
+k.10='10|Kleine straat'
+k.11='11|Grote straat'
+k.12='12|Yathzee'
+k.13='13|Vrije keuze'
+If kt<>13
+  Then Do n=7 to 12
+    If Punten(n)<>0 & \gemkeu.sp.n Then adv=k.n||'|0'
+  End n
+Else Do n=1 to 13 Until adv<>''
+  If \gemkeu.sp.n Then adv=k.n||'|1'
+End
+
+Return adv
+/* Einde Advies */
+
+/* Punten voor gemaakte keuze vaststellen */
+Punten: Procedure Expose  v.
+
+Arg k
 Select
   When k>=1 & k<=6 Then punten=k*v.1.k
-  When k=7 & v.2.3=1 | (k=7 | k=8) & v.2.4=1 | (k=7 | k=8) & v.2.5=1 | k=13
-    Then punten=v.4
+  When k=7 & v.2.3=1 |,
+      (k=7 | k=8) & v.2.4=1 |,
+      (k=7 | k=8) & v.2.5=1 |,
+       k=13 Then punten=v.4
   When k=9 & v.2.2=1 & v.2.3=1 Then punten=25
-  When k=10 & (Left(v.3,4)='1111' | SubStr(v.3,2,4)='1111',
-         | Right(v.3,4)='1111')
-    Then punten=30
-  When k=11 & (Left(v.3,5)='11111' | Right(v.3,5)='11111') Then punten=40
+  When k=10 & Pos('1111',v.3)<>0 Then punten=30
+  When k=11 & Pos('11111',v.3)<>0 Then punten=40
   When k=12 & v.2.5=1 Then punten=50
   Otherwise punten=0
 End
@@ -486,11 +507,12 @@ TotaalSc: Procedure Expose k sp scl.sp scr.sp
 Arg punten
 /* waarschuwen als er geen punten behaald worden */
 ok=1
-If punten=0
+If punten=0 & kt<>13
   Then Do
     RxSetPos(24,0)
     rc=RxWrScr(Centre('Deze keuze levert geen punten op! Doorgaan [J/N]',
       '?',80),23)
+    RxSetPos(24,0)
     If \Yes('J','N') Then ok=0
     RxCls(16,24,0,24,79)
   End
@@ -523,7 +545,7 @@ Return ok
 /* Einde TotaalSc */
 
 /* Einde */
-Einde: Procedure Expose splrs sp scl. scr. naam. scr versie
+Einde: Procedure Expose splrs sp scl. scr. naam. scr versie kt
 
 /* Na(a)m(en) winnaar(s) afbeelden */
 /* totaalscores spelers */
@@ -583,7 +605,10 @@ If Right(sc.n,3)<sct
     Do grens=splrs+11-1 To splrs By -1 Until stop; stop=0
       Do n=1 To grens Until ok; m=n+1; ok=0
         If Right(sc.n,3)>Right(sc.m,3)
-          Then Do; h=sc.n; sc.n=sc.m; sc.m=h; End
+          Then Do
+            Push sc.n; Push sc.m
+            Parse Pull sc.n; Parse Pull sc.m
+          End
         Else If n>splrs Then ok=1
         Else If n=splrs Then Do; ok=1; stop=1; End
       End n
@@ -599,15 +624,19 @@ CloseFile(scr)
 
 /* Nog een keer? & Tot ziens! */
 RxSetPos(24,0); rc=RxWrScr(Centre('Opnieuw beginnen [J/N] ?',80),23)
+RxSetPos(24,0) /* dit i.v.m. setpos in usrinput, geeft anders error */
 If Yes('J','N')
-  Then sp=0 /* Bij keuze 14 dan sp wordt -1, bij nog een spelletje wordt
-               afsluiten voorkomen door sp niet meer -1 te laten zijn */
-Else  Do
+  Then kt=15 /* Bij keuze 14 dan kt wordt 14 bij beeindgen kt-loop in
+                hoofdprogramma, bij nog een spelletje wordt
+                afsluiten voorkomen door kt niet meer 14 te laten zijn.
+                (Waarde die hier aan kt wordt toegekend moet groter als 14
+                zijn.) */
+Else Do
   RxSetPos(24,0); rc=RxWrScr(Centre('Tot ziens!',80),23)
-  sp=-1; RxSleep(2)
+  RxSleep(2)
 End
 
-Return
+Return ''
 /* Einde Einde */
 
 /* Speler wil Yathzee-Top-11 zien */
@@ -620,7 +649,7 @@ Queue 'ษออออออออออออออออออออออออออออออออออัอออออออออออออออออออป'
 Queue 'บ Speler                           ณ Score             บ'
 Queue 'วฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ'
 Queue 'ศออออออออออออออออออออออออออออออออออฯอออออออออออออออออออผ'
-ReadQueue(3)
+Do 3; Parse Pull q; rc=CharOut(,Centre(q,80)); End
 OpenFile(scr,'read',0)
 SetFPos(scr,6)
 Do n=8 To 18
@@ -629,7 +658,7 @@ Do n=8 To 18
   ('ณ ')(Right(a,3))('               บ'),80))
 End
 CloseFile(scr)
-ReadQueue()
+Parse Pull q; rc=CharOut(,Centre(q,80))
 Say; Say; rc=Charout(,Centre('Druk op een toets om verder te gaan ...',80))
 WaitForKey()
 
@@ -637,7 +666,6 @@ Return ''
 /* Einde Top11Zien */
 
 /* Subs */
-
 OpenFile:
 Return Left(Stream(Arg(1),'c','open 'Arg(2)),Arg(3))
 
@@ -656,51 +684,27 @@ Return (CharIn(Arg(1),,20))(Right(C2D(CharIn(Arg(1),,2)),3,0))
 WriteEntry:
 Return Left(CharOut(Arg(1),(Left(Arg(2),20))(D2C(Right(Arg(2),3),2))),0)
 
-ReadQueue: Procedure
-Arg p, q, r
-If r='' Then r=18
-If q='' Then q='C'
-If p='' Then p=1
-Do p
-  Parse Pull s
-  Select
-    When q='C' Then rc=CharOut(,Centre(s,80))
-    When q='W' Then rc=RxWrScr(Centre(s,80),r)
-  End
-End
-Return ''
-
-UserInput: Procedure
-Arg p, q, r, s
-If s='' Then s=1
-If r='' Then r='ECHO'
-If q='' Then q='ON'
-RxCrStat(q)
-Select
-  When p='K' | p='' Then Do; inp=RxGetKey(r); If s Then inp=Translate(inp); End
-  When p='L' Then Parse Linein inp
-  When p='P'  Then Parse Pull inp
-End
-If q='ON' Then RxCrStat('off')
-Return inp
-
 Yes: Procedure
 Arg yes, no
 Do Until n=yes | n=no
-  n=UserInput(,'off','noecho')
-  If n=yes Then rc=1
-  If n=no Then rc=0
+  n=UsrInput(,,0,0,1,,0)
+  Select
+    When n='' Then Do; n=yes; rc=1; End
+    When n=yes Then rc=1
+    When n=no Then rc=0
+    Otherwise Nop
+  End
 End
 Return rc
 
 WaitForKey: Procedure
-Do Until Chars()=0; rc=UserInput(,'off','noecho',0); End
+Do Until Chars()=0; rc=RxGetKey('noecho'); End
 Return ''
 
 /* Einde Subs */
 /*
 ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-บ EOF YATHZEE Versie 2.20  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX  บ
+บ EOF YATHZEE Versie 2.30  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX  บ
 ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 */
 

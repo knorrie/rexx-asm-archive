@@ -1,6 +1,6 @@
 /*
   SCRVIEW.BAT - Yathzee-Top-11 Viewer Version 1.00 Hans van Kranenburg 1996
-                Onderdeel van Yathzee v2.20
+                Onderdeel van Yathzee v2.30
 
   Laat de inhoud van n of meerdere Yathzee-Top-11 files zien
 
@@ -10,6 +10,8 @@
 
   Parameters:
     - filenames van Yathzee-Top-11 files
+    > als een filename wordt opgegeven zonder extensie wordt .SCR toegevoegd
+      type om dit te voorkomen wel een punt, maar geen extensie
 
   bv. "SCRVIEW.BAT \YATHZEE\YATHZEE.SCR SCORES.SCR"
 */
@@ -42,12 +44,14 @@ Exit
 /* End Main */
 
 /* Subs */
-
 GetParams: Procedure Expose scr. nfiles
 Arg poc; rc=1
 If poc='' Then Do; Message('noparam'); rc=0; End
 nfiles=Words(poc)
-Do n=1 To nfiles; scr.n=Word(poc,n); End
+Do n=1 To nfiles
+  scr.n=Word(poc,n)
+  If Pos('.',scr.n)=0 Then scr.n=scr.n||'.SCR'
+End
 Return rc
 
 /* Yathzee-Top-11 file initialisatie */
@@ -76,7 +80,7 @@ Do n=1 To Arg()
     When p='BEGIN' Then Say SourceLine(2)
     When p='NOPARAM' Then Do a=3 to 14; Say SourceLine(a); End
     When p='OPENERROR'
-      Then Do; Say '  Error opening 'Arg(n+1)'.'; n=n+1; End
+      Then Do; Say '  Error opening 'Arg(n+1); n=n+1; End
     When p='NOTYT11F'
       Then Do; Say '  'Arg(n+1)' is not a Yathzee-Top-11 file.'; n=n+1; End
   End
@@ -88,12 +92,12 @@ Top11Zien: Procedure Expose versie
 
 Arg scr
 RxCls(); Say; Say
-Say Centre('Yathzee-Top-11: 'scr'  SCRVIEW Versie 'versie,80); Say
+Say Centre('Yathzee-Top-11: 'scr'  SCRVIEW Version 'versie,80); Say
 Queue 'ษออออออออออออออออออออออออออออออออออัอออออออออออออออออออป'
 Queue 'บ Player                           ณ Score             บ'
 Queue 'วฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ'
 Queue 'ศออออออออออออออออออออออออออออออออออฯอออออออออออออออออออผ'
-ReadQueue(3)
+Do 3; Parse Pull q; rc=CharOut(,Centre(q,80)); End
 OpenFile(scr,'read',0)
 SetFPos(scr,6)
 Do n=8 To 18
@@ -102,7 +106,7 @@ Do n=8 To 18
   ('ณ ')(Right(a,3))('               บ'),80))
 End
 CloseFile(scr)
-ReadQueue()
+Parse Pull q; rc=CharOut(,Centre(q,80))
 Say; Say; rc=Charout(,Centre('Press any key to continue ...',80))
 WaitForKey()
 
@@ -124,16 +128,7 @@ Return Left(Stream(Arg(1),'c','seek 'Arg(2)),0)
 ReadEntry:
 Return (CharIn(Arg(1),,20))(Right(C2D(CharIn(Arg(1),,2)),3,0))
 
-ReadQueue: Procedure
-Arg p .; If p='' Then p=1
-Do p
-  Parse Pull q; rc=CharOut(,Centre(q,80))
-End
-Return ''
-
 WaitForKey:
 Do Until Chars()=0; rc=RxGetKey('noecho'); End
 Return ''
-
-/* End Subs */
 
