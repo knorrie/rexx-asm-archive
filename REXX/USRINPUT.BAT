@@ -1,10 +1,10 @@
 /*
-  UserInput v1.00 - Hans van Kranenburg 1996 - PC DOS 7 REXX
+  UserInput v1.01 - Hans van Kranenburg 1996 - PC DOS 7 REXX
 
   Parameters:               Default:
   01 - aantal tekens         1
   02 - string                ''
-  03 - cursor                1
+  03 - cursor aan/uit        1
   04 - echo                  1
   05 - uppercase             0
   06 - insert                1
@@ -13,9 +13,16 @@
        bij eerste wijziging
   09 - teken op lege plek    ' ' (space)
   10 - replace character     ''  (no replace) (e.g. password input)
+
+  Nieuw bij v1.01:
+    m.b.v. uitgebreide RxCrStat kan nu gecontroleerd worden of de cursor bij
+    het aanroepen van UsrInput wel of niet getoond wordt. Bij het verlaten
+    van UsrInput kan die cursor dan weer netjes teruggezet worden.
+
 */
 UserInput:
 
+If RxCrStat() Then crstat='on'; Else crstat='off'
 RxCrStat('off')
 Parse Arg a, str, c, e, u, i, ent, w, chr, rchr
 If a='' Then a=1
@@ -31,9 +38,7 @@ sp=1; l=Length(str) /* string pointer, length of string */
 Parse Value RxGetPos() With y x
 If e
   Then Do
-    If chr<>' ' Then rc=CharOut(,Copies(chr,a))
-    RxSetPos(y,x)
-    rc=CharOut(,str)
+    rc=CharOut(,str)||Copies(chr,a-Length(str))
     RxSetPos(y,x)
   End
 Do Until t='0D' | l=a & \ent
@@ -126,8 +131,7 @@ Do Until t='0D' | l=a & \ent
   End
   w=0
 End
-If c Then RxCrStat('on')
-If u Then str=Translate(str)
+If u Then str=Translate(str); RxCrStat(crstat)
 
 Return str
 
