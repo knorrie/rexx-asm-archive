@@ -1,6 +1,6 @@
 /*
   SCRVIEW.BAT - Yathzee-Top-11 Viewer Version 1.00 Hans van Kranenburg 1997
-                Onderdeel van Yathzee v2.40
+                Onderdeel van Yathzee v2.41
 
   Laat de inhoud van ‚‚n of meerdere Yathzee-Top-11 files zien
 
@@ -17,7 +17,7 @@
 */
 
 /* Main */
-versie='2.40'; cls=1
+versie='2.41'; cls=1
 RxCrStat('off')
 Say SourceLine(2)
 If GetParams(Arg(1)) /* set variables: scr. nfiles */

@@ -1,6 +1,6 @@
 /*
   SCRMERGE.BAT - Yathzee-Top-11 Merge  Hans van Kranenburg 1996
-                 Onderdeel van Yathzee v2.40
+                 Onderdeel van Yathzee v2.41
 
   Leest 1 of meerdere Yathzee-Top-11 files in en schijft ‚‚n file weg met
   daarin de 11 hoogste scores
@@ -22,7 +22,7 @@
 */
 
 /* Main */
-versie='2.40'
+versie='2.41'
 Say Sourceline(2)
 If GetParams(Arg(1)) /* set variables: scr. nfiles */
   Then Do

@@ -1,6 +1,6 @@
 /*
 ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-บ   YATHZEE Versie 2.40  Hans van Kranenburg 1995-1997  IBM PC DOS 7.0 REXX    บ
+บ   YATHZEE Versie 2.41  Hans van Kranenburg 1995-1997  IBM PC DOS 7.0 REXX    บ
 ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 
 Yathzee-history:
@@ -124,6 +124,17 @@ Yathzee-history:
      Enter werkt hier niet meer als Ja-antwoord
    Subs ook uit SCR* verwijderd
 
+ Versie 2.41  In produktie gegaan: 2 juni 1998
+ Wijzigingen:
+   Bug verwijderd: in hoofdprogramma in versie 2.40 achter "Do sp=1 To splrs"
+     stond "Until kt=13", hierdoor werd als je met meerdere spelers speelde
+     de rest van de spelers na de laatste beurt van speler 1 overgeslagen
+     "Until kt=13" verwijderd.
+   In de regel erboven typfoutje verbeterd (stond "to", moet "To" zijn)
+   Aan het begin van Gooien stond "steen vast" na v.=0, dit moet natuurlijk
+     "alle stenen LOS" zijn
+
+
 Einde Yathzee-history
 
 Programmastuctuurschema (boomdiagram)
@@ -138,7 +149,7 @@ Programmastuctuurschema (boomdiagram)
 
   Subs worden niet aangegeven
 
- Yathzee v2.40
+ Yathzee v2.41
  รฤฤ[Z]Hoofdprogramma
  ณ   รฤฤ[SF]Controleren schermgrootte
  ณ   รฤฤ[SF]Top11File
@@ -171,14 +182,14 @@ Einde Programmastructuurschema
 
 /* Hoofdprogramma */
 RxCrStat('off')
-versie='2.40'; jaar='1997'
+versie='2.41'; jaar='1998'
 If ScrSiz(25,80) & Top11File(Arg(1)) /* set variables: scr */
   Then Do
     Do Until kt=14
       Call Opening
       Call SchermOpbouwen
-      Do kt=1 to 13 /* keuze teller */
-        Do sp=1 To splrs Until kt=13
+      Do kt=1 To 13 /* keuze teller */
+        Do sp=1 To splrs
           Call Gooien
           Call Keuze
         End sp
@@ -339,7 +350,7 @@ Return ''
 /* Gooien */
 Gooien: Procedure Expose sp naam.sp st.
 
-v.=0 /* steen vast */
+v.=0 /* alle stenen los */
 RxCls(,14,20,14,38)
 RxSetPos(14,7); rc=RxWrScr(sp,9)
 RxSetPos(14,19); rc=RxWrScr(naam.sp,9)
@@ -699,7 +710,7 @@ Return ''
 
 /*
 ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-บ EOF YATHZEE Versie 2.40  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX  บ
+บ EOF YATHZEE Versie 2.41  Hans van Kranenburg 1995-1996  IBM PC DOS 7.0 REXX  บ
 ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
 */
 

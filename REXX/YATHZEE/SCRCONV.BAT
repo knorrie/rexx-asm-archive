@@ -1,6 +1,6 @@
 /*
   SCRCONV.BAT - Yathzee-Top-1x Convertor - Hans van Kranenburg 1997
-                Onderdeel van Yathzee v2.40
+                Onderdeel van Yathzee v2.41
 
   Leest oude Yathzee-Top-1x file (v2.10 Top-10 en vanaf v2.11 Top-11) en
   converteert 'm naar nieuwe formaat (v2.20)
@@ -14,7 +14,7 @@
 */
 
 /* Main */
-versie='2.40'; top.=''
+versie='2.41'; top.=''
 Say SourceLine(2); Say SourceLine(3); Say
 
 /* Controleren of inputfile wel een oude Yathzee-Top-11 file is */
