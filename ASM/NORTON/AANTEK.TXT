@@ -1,0 +1,138 @@
+Aantekeningen bij 'Peter Nortons MACHINETAALBOEK voor de IBM PC & PS/2'
+
+Registers
+  Algemene registers: AX,BX,CX,DX
+  Speciale registers: SP,BP,SI,DI,DS,ES,SS,CS,IP
+    SP: Stack Pointer
+    SS: Stack Segment
+    CS: Code Segment
+    IP: Instruction Pointer
+
+Segment en Offset
+  Geheugen in stukken van 64kb = segmenten
+  Elk segment begint op veelvoud 16 bytes
+  Afstand tussen begin segment en adres(label) is offset
+    bv. 02A6:0100 = segment 02A6, offset 0100 (CS:IP)
+
+Woorden en Bytes
+  In register staat een woord (2 bytes)
+  Register wordt opgesplitst in twee byte-registers, High en Low
+    ÚÄÄÄ AH ÄÄÄ¿  ÚÄÄÄ AL ÄÄÄ¿
+     0000  0000    0000  0000  (Tellen van links naar rechts, dus bit 0 tot 15)
+    ÀÄÄÄÄÄÄÄÄÄÄ AX ÄÄÄÄÄÄÄÄÄÄÙ
+
+Optellen, Aftrekken, Vermenigvuldigen en Delen
+  Machinetaal instructies:
+    Optellen  : ADD  bv. ADD AX,BX (REXX: AX=AX+BX) of ADD CX,4F of ADD BX,AH
+    Aftrekken : SUB  bv. SUB AX,BX (REXX: AX=AX-BX) of SUB CX,4F of SUB BX,AH
+    Vermenigvuldigen : MUL  bv. MUL BX (REXX: DXAX=BX*AX)
+      toelichting: alleen BX omdat MUL altijd met AX vermenigvuldigt
+        uitkomst in DX:AX (voorzorgsmaatregel voor als uitkomst 32 bit is)
+    Delen : DIV  bv. DIV BX (REXX: AX=DXAX/BX)
+      toelichting: alleen BX omdat DIV altijd DX:AX deelt
+        uitkomst in AX, rest in DX
+
+De Interrupt - INT 20 en INT 21
+  Met INT DOS aanroepen (REXX: soort CALL)
+  INT 21 : o.a. tekens afbeelden op scherm
+    AH = 01 : 1 teken lezen, echo
+      teken komt in AL
+    AH = 02 : 1 teken afbeelden
+      DL = 41 (bv.) : ASCII-code van teken dat afgedrukt moet worden
+    AH = 08 : 1 teken lezen, noecho
+    AH = 09 : meerdere tekens afbeelden
+      DX = offset voor start tekenreeks (afsluiten met $ = ASCII 24)
+  INT 20 : besturing terug naar vorige environment (bv. COMMAND, DEBUG)
+
+De MOV instructie (MOVe)
+  Met MOV verplaatsen, kopi‰ren (bv. AH en DL instellen voor INT 21)
+    bv. MOV AH,02 (REXX: AH=02) of MOV DL,41 of MOV DX,ABCD of MOV AH,AL
+
+Rotaties en Carry Flag
+  Bij overflow gaat de 1-bit naar de overdrachtvlag (Carry Flag, CF)
+
+De RCL instructie (Rotate Carry Left)
+  bv. RCL BL,1
+    roteert BL en CF 1 bit naar links
+    CF  BL
+    0   10110100  9x RCL, dan weer terug in oorspronkelijke staat
+    1   01101000
+  voor meerdere rotaties ineens, roteerteller in CL
+De ADC instructie (ADd with Carry)
+  bv. ADC DL,30
+    telt 3 getallen op: DL, 30 en inhoud CF
+
+De LOOP instructie
+  bv. BINAIR.COM, beeldt binaire waarde van AAh af (10101010)
+      0100  MOV     BL,AA
+      0102  MOV     AH,02
+      0104  MOV     CX,0008
+      0107  MOV     DL,00 Ä¿
+      0109  RCL     BL,1   ÃÄÄÄ LOOP 0107 zorgt dat dit 8x gedaan wordt (CX)
+      010B  ADC     DL,30  ³
+      010E  INT     21    ÄÙ
+      0110  LOOP    0107
+      0112  INT     20
+
+Vergelijk- en statusbits
+  Overdrachtvlag   (Carry Flag)        NC = No Carry       CY = Carry Yes
+  Nulvlag          (Zero Flag)         NZ = Not Zero       ZR = Zero
+    bv. SUB AX,BX
+      de uitkomst 0, dan nulvlag op ZR, uitkomst niet nul, dan nulvlag op NZ
+  Tekenvlag        (Sign Flag)         NG = Negatif        PL = Plus
+    bv. bij negatief twee-complementgetal op NG
+  Overloopvlag     (Overflow Flag)     NV = No Overflow    OV = Overflow
+    bv. bij optellen twee positieve getallen een negatieve verkrijgen,
+        dan overloopvlag op OV
+
+De CMP instructie (CoMPare)
+  bv. CMP AX,BX
+    als waarden gelijk, dan nulvlag ZR
+  verandert niets aan registerinhoud, i.t.t. SUB AX,BX
+
+Conditional Jumps
+  Instructie                                Wanneer naar adres na CMP AX,BX
+   JZ  #### (Jump if Zero)                   AX =  BX
+   JNZ #### (Jump if Not Zero)               AX <> BX   behandelt als getal
+   JL  #### (Jump if Less than)              AX <  BX ¿
+   JLE #### (Jump if Less than or Equal to)  AX <= BX Á met teken
+   JA  #### (Jump if Above)                  AX >  BX ¿
+   JB  #### (Jump if Below)                  AX <  BX Á zonder teken
+
+De SHR en SHL instructies (Shift Right, Shift Left)
+  bv. SHR DL,CL
+    verschuift DL CL bits naar rechts, vult links aan met 0-en en bit die
+    eraf valt komt in CF
+    DL        CF
+    10110011  1
+    01011001  1
+  SHL doet het zelfde, maar dan naar links
+
+De AND instructie
+  bv. AND BL,CL
+    ANDt BL met CL, resultaat in BL
+
+De CALL en RET instructies (vgl. REXX: CALL, RETURN)
+  bv. CALL ####
+      RET
+    CALL springt naar adres ####, als RET tegenkomt, dan naar eerste instructie
+    na CALL
+
+De INC instructie (INCrement)
+  bv. INC DL
+    telt 1 bij DL op
+
+De Stack (= stapel)
+  In Stack informatie opslaan bv. terugkeeradres CALL instructie
+  Twee registers die naar Stack verwijzen:
+    SS: Stack Segment = segment waarin stack staat
+    SP: Stack Pointer = top van stack
+  Stack werkt LIFO, handig voor geneste CALLs
+
+De PUSH en POP instructies (= duwen, plotseling voor de dag komen)
+  bv. PUSH CX
+    PUSHt CX op de stack
+  bv. POP CX
+    POPt de laatst gestackte waarde in CX
+  gebruik o.a. voor waarden registers bewaren en terugzetten in procedures
+
