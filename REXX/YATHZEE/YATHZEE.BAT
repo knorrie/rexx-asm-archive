@@ -1,8 +1,9 @@
 /*ษออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออป
-  บ YATHZEE REXX Versie 2.00 door Hans van Kranenburg 1995/1996              บ
+  บ YATHZEE REXX Versie 2.01 door Hans van Kranenburg 1995/1996              บ
   ศออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
-Veranderingen t.o.v. v1.00:
-  Alles, het programma is totaal herschreven */
+Veranderingen t.o.v. v2.00
+  Bij verkeerde keuze is '--' in 'ฤฤ' veranderd
+  Type-foutje bij 'Is scl.sp>63 Then bonus=35' verbeterd */
 
 /* Hoofdprogramma */
 Trace Off; Rxcrstat(off)
@@ -49,7 +50,7 @@ line.11='Û    Û   Û         Û   Û    Û   Û'
 line.12='Û     Û  ÛÜÜÜÜÜÜ  Û     Û  Û     Û'
 Do n=8 to 12; Rxsetpos(n,24); rc=Rxwrscr(line.n,18); End n
 Rxsetpos(24,9)
-rc=Rxwrscr('Versie 2.00 Hans van Kranenburg 1995/1996 IBM PC DOS 7.0 REXX',23)
+rc=Rxwrscr('Versie 2.01 Hans van Kranenburg 1995/1996 IBM PC DOS 7.0 REXX',23)
 Rxsleep(3)
 
 /* Informatie spelers opvragen */
@@ -60,7 +61,7 @@ Do Until splrs>=1 & splrs<=5
   Rxcrstat(on); splrs=rxgetkey(echo); Rxcrstat(off); Rxcls(16,22,15,22,64)
   If splrs<1 | splrs>5 Then Do
     Rxsetpos(22,15)
-    rc=Rxwrscr('Verkeerde invoer -- Aantal spelers 1, 2, 3, 4 of 5',23)
+    rc=Rxwrscr('Verkeerde invoer ฤฤ Aantal spelers 1, 2, 3, 4 of 5',23)
   End
 End
 Do n=1 to splrs
@@ -88,7 +89,7 @@ Return
 schermopbouwen: Procedure Expose splrs init. naam.
 
 Rxcls(); Rxcls(16,0,0,0,79); Rxcls(16,24,0,24,79)
-Rxsetpos(0,31); rc=Rxwrscr('YATHZEE REXX v2.00',23)
+Rxsetpos(0,31); rc=Rxwrscr('YATHZEE REXX v2.01',23)
 Rxsetpos(0,61); rc=Rxwrscr('Hans van Kranenburg',23)
 Rxsetpos(2,0)
 rc=Charout(,'ษอออออออออออออหออออัออออัออออัออออัออออหออออออออออออออหออออัออออัออออัออออัออออป')
@@ -153,7 +154,7 @@ Do worp=1 to 3
         When n='G' | c2d(n)=13 Then Nop
         Otherwise Do
           Rxsetpos(24,17)
-          rc=Rxwrscr('Verkeerde keuze -- Toets 1, 2, 3, 4, 5, R of G',23)
+          rc=Rxwrscr('Verkeerde keuze ฤฤ Toets 1, 2, 3, 4, 5, R of G',23)
         End
       End
     End
@@ -259,7 +260,7 @@ Select
   When k=13 Then Do n=1 to 5; punten=punten+st.n; End n
 End
 
-Is scl.sp>63 Then bonus=35
+If scl.sp>63 Then bonus=35
 If k<=6 Then Do
   scl.sp=scl.sp+punten
   Rxsetpos(10,11+5*sp); Say Right(scl.sp,3)
